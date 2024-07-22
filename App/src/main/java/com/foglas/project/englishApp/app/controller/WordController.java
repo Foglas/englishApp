@@ -26,4 +26,5 @@ public class WordController {
         Optional<InputWordDto> wordOpt = Optional.of(word);
         return wordService.createWord(wordOpt);
     }
+
 }

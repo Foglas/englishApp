@@ -1,55 +1,98 @@
 package com.foglas.project.englishApp.app.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.apache.catalina.User;
+import org.hibernate.annotations.Immutable;
 
+import java.util.ArrayList;
 import java.util.List;
 
+
 @Getter
-@AllArgsConstructor
+@Builder
+@Entity
+@Table(name = "word")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Immutable
 public class Word {
 
     @Id
-    @SequenceGenerator(name = "WordGen", sequenceName = "wordId",initialValue = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "wordGen")
+    @SequenceGenerator(name = "wordGen", sequenceName = "wordid", allocationSize = 1, initialValue = 1)
     private long id;
 
     @Column(name = "text")
     private String text;
 
-    @Column(name = "secondForm")
-    private String secondForm;
+    @Builder.Default
+    @Column(name = "second_form")
+    private String secondForm = "notExist";
 
-    @Column(name = "thirdForm")
-    private String thirdForm;
+    @Builder.Default
+    @Column(name = "third_form")
+    private String thirdForm = "notExist";
 
+    @Builder.Default
     @Column(name = "countable")
-    private String countable;
+    private String countable = "noSet";
 
+    @Builder.Default
     @Column(name = "priority")
-    private String priority;
+    private int priority = 10;
 
-    @Column(name = "examples")
-    private List<Example> examples;
+    @Builder.Default
+    @OneToMany(mappedBy = "word", cascade = CascadeType.ALL)
+    private List<Example> examples = new ArrayList<>();
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fk_userId")
-    private List<User> users;
+    @JoinTable(name = "user_word", joinColumns = @JoinColumn(name = "fk_userid", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "fk_wordid", referencedColumnName = "id"))
+    private List<UserDetail> users = new ArrayList<>();
 
-    private final int DEFAULT_PRIORITY = 10;
-
-    public Word(){
-
+    public Word(int priority){
+        this.priority = priority;
     }
-    public Word(String text, String secondForm, String thirdForm, String countable, List<Example> examples, List<User> users) {
-        this.text = text;
-        this.secondForm = secondForm;
-        this.thirdForm = thirdForm;
-        this.countable = countable;
-        this.examples = examples;
-        this.users = users;
+
+    @Builder(builderMethodName = "builderFullWord")
+    public static WordBuilder builderFullWord(Word word){
+       return  Word.builder()
+               .id(word.getId())
+               .text(word.getText())
+               .countable(word.getCountable())
+               .secondForm(word.getSecondForm())
+               .thirdForm(word.getThirdForm())
+               .priority(word.getPriority())
+               .examples(word.getExamples())
+               .users(word.getUsers());
+    }
+
+    @Builder(builderMethodName = "builderFullWord")
+    public static WordBuilder builderFullWordWithCustomPriority(Word word, int priority){
+        return  Word.builder()
+                .id(word.getId())
+                .text(word.getText())
+                .countable(word.getCountable())
+                .secondForm(word.getSecondForm())
+                .thirdForm(word.getThirdForm())
+                .priority(priority)
+                .examples(word.getExamples())
+                .users(word.getUsers());
+    }
+
+    @Builder(builderMethodName = "builderWordSeparateExamples")
+    public static WordBuilder builderWordSeparateExamples(Word word, List<Example> examples){
+        return Word.builder()
+                .id(word.getId())
+                .text(word.getText())
+                .countable(word.getCountable())
+                .secondForm(word.getSecondForm())
+                .thirdForm(word.getThirdForm())
+                .priority(word.getPriority())
+                .examples(examples)
+                .users(word.getUsers());
     }
 
     @Override
@@ -61,9 +104,7 @@ public class Word {
                 ", thirdForm='" + thirdForm + '\'' +
                 ", countable='" + countable + '\'' +
                 ", priority='" + priority + '\'' +
-                ", examples=" + examples +
                 ", users=" + users +
-                ", DEFAULT_PRIORITY=" + DEFAULT_PRIORITY +
                 '}';
     }
 }

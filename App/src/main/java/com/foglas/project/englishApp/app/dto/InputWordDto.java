@@ -1,22 +1,38 @@
 package com.foglas.project.englishApp.app.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.foglas.project.englishApp.app.domain.Example;
+import lombok.*;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 
-@AllArgsConstructor
-@Getter
+
+@Value
+@Builder
 public class InputWordDto {
+
 
     private String text;
     private String secondForm;
     private String thirdForm;
     private String countable;
-    //private List<Example> examples;
-    //private List<User> users;
+    private List<ExampleDto> examples;
 
-    public InputWordDto() {
+    @JsonCreator
+    public static InputWordDto create(@JsonProperty("text") String text,
+                                      @JsonProperty("secondForm") String secondForm,
+                                      @JsonProperty("thirdForm") String thirdForm,
+                                      @JsonProperty("countable") String countable,
+                                      @JsonProperty("examples") List<ExampleDto> examples){
+        return InputWordDto.builder()
+                .text(text)
+                .secondForm(secondForm)
+                .thirdForm(thirdForm)
+                .countable(countable)
+                .examples(examples)
+                .build();
     }
+
 }

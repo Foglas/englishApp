@@ -12,4 +12,6 @@ public interface WordServiceInf {
     ResponseEntity<?> deleteWord(long id);
     ResponseEntity<?> updateWord(Optional<Word> word);
 
+    ResponseEntity<Word> getWordById(long id);
+
 }
