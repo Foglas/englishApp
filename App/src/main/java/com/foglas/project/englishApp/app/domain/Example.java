@@ -1,15 +1,16 @@
 package com.foglas.project.englishApp.app.domain;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.Immutable;
 
 @Entity
 @Table(name = "example")
 @Getter
-@Setter
-@AllArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@AllArgsConstructor(access = AccessLevel.PROTECTED)
+@Immutable
 public class Example {
 
     @Id
@@ -23,10 +24,6 @@ public class Example {
     @ManyToOne
     @JoinColumn(name = "fk_wordid", referencedColumnName = "id")
     private Word word;
-
-    public Example(){
-
-    }
     public Example(String text, Word word){
         this.text = text;
         this.word = word;

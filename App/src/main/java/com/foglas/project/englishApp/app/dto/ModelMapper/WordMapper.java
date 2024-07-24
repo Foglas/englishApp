@@ -5,7 +5,6 @@ import com.foglas.project.englishApp.app.domain.Word;
 import com.foglas.project.englishApp.app.dto.InputWordDto;
 import com.foglas.project.englishApp.app.dto.ModelMapper.inf.BaseMapper;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public abstract class WordMapper implements BaseMapper<InputWordDto, Word> {
 
     public Word toEntityWithInnerExample(InputWordDto dto) {
         Word word = toEntity(dto);
-        word.getExamples().stream().map((actualExample) -> {actualExample.setWord(word); return actualExample;}).collect(Collectors.toList());
+        word.getExamples().stream().map((actualExample) -> { return Example.builder().word(actualExample.getWord());}).collect(Collectors.toList());
         return word;
     }
 

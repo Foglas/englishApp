@@ -2,10 +2,12 @@ package com.foglas.project.englishApp.app.controller;
 
 import com.foglas.project.englishApp.app.dto.InputWordDto;
 import com.foglas.project.englishApp.app.service.WordService;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -22,7 +24,7 @@ public class WordController {
     }
 
     @PostMapping("/createWord")
-    public ResponseEntity<?> createWord(@RequestBody InputWordDto word){
+    public ResponseEntity<?> createWord(@Valid @RequestBody InputWordDto word){
         Optional<InputWordDto> wordOpt = Optional.of(word);
         return wordService.createWord(wordOpt);
     }
