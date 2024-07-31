@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.endpoins;
 
-public interface WordEndpointInf {
+public interface WordClientInf {
 
     void sendSave();
 

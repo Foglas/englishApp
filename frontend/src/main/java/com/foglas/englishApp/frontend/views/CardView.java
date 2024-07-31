@@ -16,7 +16,7 @@ public class CardView extends MyAppLayout {
     verticalLayout.setWidthFull();
     HorizontalLayout horizontalLayout = new HorizontalLayout();
     horizontalLayout.setWidthFull();
-    horizontalLayout.add(new Card("hello", "ahoj"));
+    horizontalLayout.add(new Card("Take", "vzít"));
     verticalLayout.add(horizontalLayout);
     setContent(verticalLayout);
     horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);

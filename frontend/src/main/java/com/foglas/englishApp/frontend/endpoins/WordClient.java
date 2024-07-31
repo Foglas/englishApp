@@ -1,7 +1,7 @@
 package com.foglas.englishApp.frontend.endpoins;
 
 
-public class SenderWordEndpoint implements WordEndpointInf{
+public class WordClient implements WordClientInf {
 
     @Override
     public void sendSave() {
