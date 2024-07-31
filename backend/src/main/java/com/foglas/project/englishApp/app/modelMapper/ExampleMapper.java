@@ -1,9 +1,10 @@
-package com.foglas.project.englishApp.app.dto.ModelMapper;
+package com.foglas.project.englishApp.app.modelMapper;
 
 import com.foglas.project.englishApp.app.domain.Example;
 import com.foglas.project.englishApp.app.domain.Word;
-import com.foglas.project.englishApp.app.dto.ExampleDto;
-import com.foglas.project.englishApp.app.dto.ModelMapper.inf.BaseMapper;
+import com.foglas.englishApp.dto.ExampleDto;
+
+import com.foglas.project.englishApp.app.modelMapper.inf.BaseMapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

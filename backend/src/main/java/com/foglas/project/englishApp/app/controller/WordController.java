@@ -1,14 +1,12 @@
 package com.foglas.project.englishApp.app.controller;
 
-import com.foglas.project.englishApp.app.dto.InputWordDto;
+import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.project.englishApp.app.response.inf.CommonResponseInf;
 import com.foglas.project.englishApp.app.service.WordService;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;

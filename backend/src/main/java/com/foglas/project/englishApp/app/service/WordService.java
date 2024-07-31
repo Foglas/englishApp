@@ -1,8 +1,7 @@
 package com.foglas.project.englishApp.app.service;
 
-import com.foglas.project.englishApp.app.dto.InputWordDto;
-import com.foglas.project.englishApp.app.dto.ModelMapper.WordMapper;
-import com.foglas.project.englishApp.app.dto.ModelMapper.WordMapperImpl;
+import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.project.englishApp.app.modelMapper.WordMapper;
 import com.foglas.project.englishApp.app.repository.ExampleRepo;
 import com.foglas.project.englishApp.app.domain.Word;
 import com.foglas.project.englishApp.app.repository.WordRepo;
@@ -23,7 +22,7 @@ public class WordService implements WordServiceInf{
     private WordMapper modelMapper;
 
     @Autowired
-    public WordService(ExampleRepo exampleRepoImpl, WordRepo wordRepoImpl, WordMapperImpl modelMapper){
+    public WordService(ExampleRepo exampleRepoImpl, WordRepo wordRepoImpl, WordMapper modelMapper){
         this.exampleRepo = exampleRepoImpl;
         this.wordRepo = wordRepoImpl;
         this.modelMapper = modelMapper;

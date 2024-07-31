@@ -1,7 +1,7 @@
 package com.foglas.project.englishApp.app.service;
 
 import com.foglas.project.englishApp.app.domain.Word;
-import com.foglas.project.englishApp.app.dto.InputWordDto;
+import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.project.englishApp.app.response.inf.CommonResponseInf;
 import org.springframework.http.ResponseEntity;
 

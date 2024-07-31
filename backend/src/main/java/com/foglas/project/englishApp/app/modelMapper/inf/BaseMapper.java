@@ -1,4 +1,4 @@
-package com.foglas.project.englishApp.app.dto.ModelMapper.inf;
+package com.foglas.project.englishApp.app.modelMapper.inf;
 
 import com.foglas.project.englishApp.app.domain.Example;
 import org.mapstruct.Named;
@@ -11,6 +11,6 @@ public interface BaseMapper<D,E> {
 
     @Named("setListToDefault")
     default E setValueToDefault(D dto){
-     return null;
+        return null;
     }
 }

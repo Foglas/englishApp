@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.components;
 
-import com.vaadin.flow.component.Component;
+import com.foglas.englishApp.frontend.components.interfaces.CardInf;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
@@ -23,13 +23,15 @@ import java.util.List;
 @Tag("Card")
 @Setter
 @Getter
-public class Card extends Div {
+public class Card extends Div implements CardInf {
 
     private H2 wordInOneLanguage;
     private H2 wordInSecondLanguage;
     private H3 wordForms;
     private List<Paragraph> paragraphs;
 
+    
+    private VerticalLayout mainVerticalLayout;
 
 
     public Card(String wordInOneLanguage, String wordInSecondLanguage){
@@ -44,6 +46,7 @@ public class Card extends Div {
 
         initCard(wordInOneLanguage, wordInSecondLanguage);
         initStyles();
+        changeToAnswer();
     }
 
 
@@ -58,16 +61,16 @@ public class Card extends Div {
 
 
     private void initCard(String wordInOneLanguage, String wordInSecondLanguage){
-        VerticalLayout verticalLayout = new VerticalLayout();
-        verticalLayout.getStyle().set("margin-top","5em");
-        verticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        mainVerticalLayout = new VerticalLayout();
+        mainVerticalLayout.getStyle().set("margin-top","5em");
+        mainVerticalLayout.setAlignItems(FlexComponent.Alignment.CENTER);
         this.wordInOneLanguage.setText(wordInOneLanguage);
         this.wordInSecondLanguage.setText(wordInSecondLanguage);
         List<String > forms = new ArrayList<>();
         forms.add("took");
         forms.add("taken");
         this.wordForms = generateFormRow(forms);
-        verticalLayout.add(this.wordInOneLanguage, this.wordInSecondLanguage, this.wordForms);
+        mainVerticalLayout.add(this.wordInOneLanguage, this.wordInSecondLanguage, this.wordForms);
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         Icon questionMark = VaadinIcon.QUESTION.create();
         Icon correct = VaadinIcon.CHECK_CIRCLE.create();
@@ -75,17 +78,17 @@ public class Card extends Div {
         Icon bad = VaadinIcon.CLOSE_CIRCLE.create();
         bad.setColor("red");
 
-        Button btnSuccess = new Button(correct);
+        Button btnCorrAnsw = new Button(correct);
         Button btnBadAnswer = new Button(bad);
 
-        horizontalLayout.add(btnBadAnswer,questionMark, btnSuccess);
-        verticalLayout.add(horizontalLayout);
+        horizontalLayout.add(btnBadAnswer,questionMark, btnCorrAnsw);
+        mainVerticalLayout.add(horizontalLayout);
 
         for (Paragraph paragraph: paragraphs){
-            verticalLayout.add(paragraph);
+            mainVerticalLayout.add(paragraph);
         }
 
-        add(verticalLayout);
+        add(mainVerticalLayout);
     }
 
 
@@ -107,10 +110,49 @@ public class Card extends Div {
 
 
 
+
     /**
      * will flip the card and show correct answers
      */
-    public Card changeOnAction(String wordInOneLanguage, String wordInSecondLanguage){
-    return new Card(wordInSecondLanguage, wordInOneLanguage);
+    @Override
+    public void changeToAnswer(){
+       mainVerticalLayout.remove(mainVerticalLayout.getChildren().toList());
+
+
+        this.wordInOneLanguage.setText("take");
+        this.wordInSecondLanguage.setText("took");
+        List<String > forms = new ArrayList<>();
+        forms.add("took");
+        forms.add("taken");
+        this.wordForms = generateFormRow(forms);
+        mainVerticalLayout.add(this.wordInOneLanguage, this.wordInSecondLanguage, this.wordForms);
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        Icon questionMark = VaadinIcon.QUESTION.create();
+        Icon correct = VaadinIcon.CHECK_CIRCLE.create();
+        correct.setColor("green");
+        Icon bad = VaadinIcon.CLOSE_CIRCLE.create();
+        bad.setColor("red");
+
+        Button btnSuccess = new Button(correct);
+        Button btnBadAnswer = new Button(bad);
+
+        horizontalLayout.add(btnBadAnswer,questionMark, btnSuccess);
+        mainVerticalLayout.add(horizontalLayout);
+
+        for (Paragraph paragraph: paragraphs){
+            mainVerticalLayout.add(paragraph);
+        }
+
+        add(mainVerticalLayout);
+    }
+
+    @Override
+    public void setActionToCorrAnswBtn() {
+
+    }
+
+    @Override
+    public void setActionToBadAnswBtn() {
+
     }
 }

@@ -1,9 +1,8 @@
-package com.foglas.project.englishApp.app.dto.ModelMapper;
-
+package com.foglas.project.englishApp.app.modelMapper;
 import com.foglas.project.englishApp.app.domain.Example;
 import com.foglas.project.englishApp.app.domain.Word;
-import com.foglas.project.englishApp.app.dto.InputWordDto;
-import com.foglas.project.englishApp.app.dto.ModelMapper.inf.BaseMapper;
+import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.project.englishApp.app.modelMapper.inf.BaseMapper;
 import org.mapstruct.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -28,16 +27,15 @@ public abstract class WordMapper implements BaseMapper<InputWordDto, Word> {
     }
 
     public Word toEntityWithFillExampleWithWord(InputWordDto dto){
-       Word wordFromMapping = this.toEntity(dto);
-       List<Example> examples = wordFromMapping.getExamples();
-       final Word word = Word.builderWordSeparateExamples(wordFromMapping, examples).build();
+        Word wordFromMapping = this.toEntity(dto);
+        List<Example> examples = wordFromMapping.getExamples();
+        final Word word = Word.builderWordSeparateExamples(wordFromMapping, examples).build();
         for (int i = 0; i<examples.size(); i++) {
-          Example example = examples.get(i);
-          example = exampleMapper.addWordInfo(example, word);
-          examples.set(i, example);
+            Example example = examples.get(i);
+            example = exampleMapper.addWordInfo(example, word);
+            examples.set(i, example);
         }
 
-       return word;
+        return word;
     }
 }
-
