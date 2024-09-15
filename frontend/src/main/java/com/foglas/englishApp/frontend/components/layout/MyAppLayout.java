@@ -1,4 +1,4 @@
-package com.foglas.englishApp.frontend.components;
+package com.foglas.englishApp.frontend.components.layout;
 
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.applayout.AppLayout;
