@@ -5,7 +5,5 @@ import java.util.Map;
 public interface FormInf {
 
      Map<String, String> readValues();
-     void addActionToSaveButtons();
-     void addActionToCancelButtons();
 
 }

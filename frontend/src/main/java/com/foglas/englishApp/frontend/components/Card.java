@@ -18,6 +18,7 @@ import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Function;
 
 
 @Tag("Card")

@@ -10,7 +10,6 @@ public class PractiseView extends MyAppLayout {
 
     public PractiseView(){
         setContent(new PractiseForm());
-
     }
 
 

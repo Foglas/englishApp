@@ -30,14 +30,18 @@ public class CardView extends MyAppLayout {
                 .examples(examples)
                 .build();
 
-    VerticalLayout verticalLayout = new VerticalLayout();
-    verticalLayout.setWidthFull();
-    HorizontalLayout horizontalLayout = new HorizontalLayout();
-    horizontalLayout.setWidthFull();
-    horizontalLayout.add(new Card(test, CardType.QUESTION));
-    verticalLayout.add(horizontalLayout);
-    setContent(verticalLayout);
-    horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        VerticalLayout verticalLayout = new VerticalLayout();
+        verticalLayout.setWidthFull();
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+        horizontalLayout.setWidthFull();
+        horizontalLayout.add(new Card(test, CardType.QUESTION));
+        verticalLayout.add(horizontalLayout);
+        setContent(verticalLayout);
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+    }
+
+    private void setWords(){
+
     }
 
 }

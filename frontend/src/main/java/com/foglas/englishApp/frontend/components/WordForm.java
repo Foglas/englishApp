@@ -1,11 +1,11 @@
 package com.foglas.englishApp.frontend.components;
 
-import ch.qos.logback.core.Layout;
+import com.foglas.englishApp.frontend.components.enums.Countable;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -13,15 +13,12 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.server.VaadinConfig;
 import lombok.extern.log4j.Log4j2;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 
 
@@ -30,13 +27,9 @@ public class WordForm extends VerticalLayout implements FormInf {
 
     private FormLayout formLayout;
     private TextField text;
-
     private TextField secondForm;
-
     private TextField thirdForm;
-
-    private TextField countable;
-
+    private ComboBox<Countable> countable;
     private Button buttonSave;
     private Button buttonCancel;
     private List<TextField> examples;
@@ -47,14 +40,22 @@ public class WordForm extends VerticalLayout implements FormInf {
         this.text = new TextField("Text", "take");
         this.secondForm = new TextField("Second form of the word", "took");
         this.thirdForm = new TextField("Third form of the word", "taken");
-        this.countable = new TextField("Countable", "C,U or not Stated");
+        this.countable = new ComboBox<>("Countable");
         this.buttonCancel = new Button("Cancel");
         this.buttonSave = new Button("save");
         examples = new ArrayList<>();
+        countable.setItems(Countable.values());
+        countable.setItemLabelGenerator((item)-> {
+        if (item.equals(Countable.NOT_STATED)){
+            return "Not stated";
+        } else {
+            return item.name();
+        }
+        });
 
         initFormLayout();
-        addActionToSaveButtons();
-        addActionToCancelButtons();
+        clickSaveHandle();
+        clickCancelHandle();
     }
 
     @Override
@@ -63,7 +64,7 @@ public class WordForm extends VerticalLayout implements FormInf {
         mapOfValues.put("text", text.getValue());
         mapOfValues.put("secondForm", secondForm.getValue());
         mapOfValues.put("thirdForm", thirdForm.getValue());
-        mapOfValues.put("countable", countable.getValue());
+        mapOfValues.put("countable", countable.getValue().name());
 
         for(int i=0; i<examples.size(); i++){
             TextField example = examples.get(i);
@@ -73,8 +74,7 @@ public class WordForm extends VerticalLayout implements FormInf {
         return mapOfValues;
     }
 
-    @Override
-    public void addActionToSaveButtons() {
+    public void clickSaveHandle() {
         buttonSave.addClickListener((event) ->{
         Map<String, String> mapOfValues = readValues();
             mapOfValues.forEach((name, value) -> {
@@ -83,10 +83,9 @@ public class WordForm extends VerticalLayout implements FormInf {
         });
     }
 
-    @Override
-    public void addActionToCancelButtons() {
+    public void clickCancelHandle() {
         buttonCancel.addClickListener((event) ->{
-            buttonCancel.getUI().ifPresent((ui) -> ui.navigate("api/cards"));
+            buttonCancel.getUI().ifPresent((ui) -> ui.navigate("/practise"));
         });
     }
 
@@ -126,9 +125,9 @@ public class WordForm extends VerticalLayout implements FormInf {
     }
 
 
-    private HorizontalLayout createExample(VerticalLayout wrapper){
+    private HorizontalLayout createExample(VerticalLayout wrapper) {
         HorizontalLayout layout = new HorizontalLayout();
-            layout.setDefaultVerticalComponentAlignment(Alignment.END);
+        layout.setDefaultVerticalComponentAlignment(Alignment.END);
         layout.setWidthFull();
         TextField example = new TextField("Example");
         examples.add(example);
@@ -137,7 +136,7 @@ public class WordForm extends VerticalLayout implements FormInf {
         Button buttonAdd = new Button(VaadinIcon.PLUS.create());
         buttonAdd.addClickListener(buttonClickEvent -> {
             UI.getCurrent().access(
-                    ()->{
+                    () -> {
                         wrapper.add(createExample(wrapper));
                         UI.getCurrent().push();
                     }
@@ -146,9 +145,9 @@ public class WordForm extends VerticalLayout implements FormInf {
 
         Button buttonMinus = new Button(VaadinIcon.MINUS.create());
         buttonMinus.addClickListener(buttonClickEvent1 -> {
-                    if (examples.size() > 1){
+                    if (examples.size() > 1) {
                         wrapper.remove(layout);
-                        UI.getCurrent().access(()->{
+                        UI.getCurrent().access(() -> {
                             examples.remove(example);
                             UI.getCurrent().push();
                         });
