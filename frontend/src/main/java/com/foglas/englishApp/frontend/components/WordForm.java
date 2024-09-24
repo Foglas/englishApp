@@ -1,7 +1,11 @@
 package com.foglas.englishApp.frontend.components;
 
-import com.foglas.englishApp.frontend.components.enums.Countable;
+import com.foglas.englishApp.dto.ExampleDto;
+import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.endpoins.WordClient;
+import com.foglas.englishApp.frontend.enums.Countable;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
+import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
@@ -15,11 +19,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 
 
 @Log4j2
@@ -33,9 +33,10 @@ public class WordForm extends VerticalLayout implements FormInf {
     private Button buttonSave;
     private Button buttonCancel;
     private List<TextField> examples;
+    private WordClient wordClient;
 
-
-    public WordForm(){
+    public WordForm(WordClient wordClient){
+        this.wordClient = wordClient;
         this.formLayout = new FormLayout();
         this.text = new TextField("Text", "take");
         this.secondForm = new TextField("Second form of the word", "took");
@@ -74,12 +75,33 @@ public class WordForm extends VerticalLayout implements FormInf {
         return mapOfValues;
     }
 
+    private InputWordDto toDto(){
+     String text = this.text.getValue();
+     String secondForm = this.secondForm.getValue();
+     String thirdForm = this.thirdForm.getValue();
+     String countable = this.countable.getValue().name();
+     List<ExampleDto> examples = new ArrayList<>();
+        for(int i=0; i<this.examples.size(); i++){
+            TextField example = this.examples.get(i);
+            examples.add(new ExampleDto(example.getValue()));
+        }
+
+        return InputWordDto.builder().text(text)
+                .examples(examples)
+                .secondForm(secondForm)
+                .thirdForm(thirdForm)
+                .countable(countable)
+                .build();
+
+    }
+
     public void clickSaveHandle() {
         buttonSave.addClickListener((event) ->{
         Map<String, String> mapOfValues = readValues();
             mapOfValues.forEach((name, value) -> {
                 log.info("Form: " + name + " : " + value);
             });
+            wordClient.sendSave(toDto());
         });
     }
 

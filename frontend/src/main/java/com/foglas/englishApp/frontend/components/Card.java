@@ -4,10 +4,7 @@ import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.components.interfaces.CardInf;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
-import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
@@ -16,9 +13,10 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
+import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
+
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Function;
 
 
 @Tag("Card")
@@ -36,6 +34,9 @@ public class Card extends Div implements CardInf {
     private InputWordDto inputWordDto;
     private HorizontalLayout buttonBar;
 
+    private Button correctButton;
+    private Button badButton;
+
 
     public Card(InputWordDto inputWordDto, CardType type){
         mainVerticalLayout = new VerticalLayout();
@@ -45,6 +46,7 @@ public class Card extends Div implements CardInf {
         mainVerticalLayout = new VerticalLayout();
         currentType = type;
         this.inputWordDto = inputWordDto;
+
 
         inputWordDto.getExamples().forEach(
                 example -> paragraphs.add(new Paragraph(example.getText()))
@@ -63,6 +65,8 @@ public class Card extends Div implements CardInf {
                add(mainVerticalLayout);
            }
         }
+
+        buttonBar = generateQuestionButtons();
 
         initStyles();
     }
@@ -91,7 +95,7 @@ public class Card extends Div implements CardInf {
         forms.add(word.getThirdForm());
         this.wordForms = generateFormsInfo(forms);
 
-        buttonBar = generateQuestionButtons();
+       // buttonBar = generateQuestionButtons();
 
         mainVerticalLayout.add(this.wordInOneLanguage, this.wordInSecondLanguage, this.wordForms, buttonBar);
 
@@ -113,7 +117,7 @@ public class Card extends Div implements CardInf {
 
     private void clear(){
        mainVerticalLayout.removeAll();
-       if (buttonBar != null) {
+       if (buttonBar != null && currentType.equals(CardType.ANSWER)) {
            buttonBar.removeAll();
        }
     }
@@ -122,19 +126,18 @@ public class Card extends Div implements CardInf {
 
     private HorizontalLayout generateQuestionButtons(){
         HorizontalLayout horizontalLayout = new HorizontalLayout();
-
+        horizontalLayout.setWidthFull();
+        horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
+        horizontalLayout.setHeight(20f, Unit.PERCENTAGE);
         Icon correct = VaadinIcon.CHECK_CIRCLE.create();
         correct.setColor("green");
         Icon bad = VaadinIcon.CLOSE_CIRCLE.create();
         bad.setColor("red");
 
-       Button correctButton = new Button(correct);
-       Button badButton = new Button(bad);
+        badButton = new Button(bad);
+        correctButton = new Button(correct);
 
-        correctButton.addClickListener(buttonClickEvent -> {
-            flip();
-            log.info("Log from listener");
-        });
+        log.info("correctButton " + correctButton);
 
         Icon questionMark = VaadinIcon.QUESTION.create();
         horizontalLayout.add(badButton,questionMark, correctButton);
@@ -186,12 +189,12 @@ public class Card extends Div implements CardInf {
     }
 
     @Override
-    public void setActionToCorrAnswBtn() {
-
+    public void setActionToCorrAnswBtn(Runnable operation) {
+        correctButton.addClickListener(buttonClickEvent -> operation.run());
     }
 
     @Override
-    public void setActionToBadAnswBtn() {
-
+    public void setActionToBadAnswBtn(Runnable operation) {
+        badButton.addClickListener(buttonClickEvent -> operation.run());
     }
 }

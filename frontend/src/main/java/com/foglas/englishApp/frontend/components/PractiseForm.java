@@ -1,27 +1,43 @@
 package com.foglas.englishApp.frontend.components;
 
-import com.foglas.englishApp.frontend.components.enums.Strategy;
+import com.foglas.englishApp.dto.ExampleDto;
+import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
+import com.foglas.englishApp.frontend.endpoins.WordClient;
+import com.foglas.englishApp.frontend.enums.Strategy;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.spring.annotation.RouteScope;
+import com.vaadin.flow.spring.annotation.RouteScopeOwner;
+import com.vaadin.flow.spring.annotation.UIScope;
+import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
+@Component
+@UIScope
 public class PractiseForm extends VerticalLayout implements FormInf {
     private Button buttonStart;
     private NumberField numberField;
     private ComboBox<Strategy> strategies;
 
+    private CardDataProvider cardData;
+    private WordClient wordClient;
 
-    public PractiseForm(){
+    public PractiseForm(CardDataProvider cardData, WordClient wordClient){
+        this.cardData = cardData;
+        this.wordClient = wordClient;
         setWidthFull();
         setHeightFull();
         HorizontalLayout formHorLay = new HorizontalLayout();
@@ -57,7 +73,8 @@ public class PractiseForm extends VerticalLayout implements FormInf {
 
     private void clickStartHandle(){
         buttonStart.addClickListener(buttonClickEvent -> {
-            Notification.show("Start :) " + readValues());
+            cardData.setWords(wordClient.getWordSet(numberField.getValue().intValue()));
+            UI.getCurrent().navigate("api/cards");
         });
     }
 
@@ -68,4 +85,6 @@ public class PractiseForm extends VerticalLayout implements FormInf {
         map.put("strategy", strategies.getValue().name());
         return map;
     }
+
+
 }
