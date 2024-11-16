@@ -1,7 +1,5 @@
 package com.foglas.englishApp.frontend.components;
 
-import com.foglas.englishApp.dto.ExampleDto;
-import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.foglas.englishApp.frontend.enums.Strategy;
