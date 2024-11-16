@@ -1,7 +1,9 @@
 package com.foglas.englishApp.frontend.components;
 
+
 import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.components.interfaces.CardInf;
+import com.foglas.englishApp.frontend.enums.CardType;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.*;
@@ -13,7 +15,6 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.log4j.Log4j2;
-import org.atmosphere.interceptor.AtmosphereResourceStateRecovery;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,8 +96,6 @@ public class Card extends Div implements CardInf {
         forms.add(word.getThirdForm());
         this.wordForms = generateFormsInfo(forms);
 
-       // buttonBar = generateQuestionButtons();
-
         mainVerticalLayout.add(this.wordInOneLanguage, this.wordInSecondLanguage, this.wordForms, buttonBar);
 
         for (Paragraph paragraph: paragraphs){
@@ -160,9 +159,6 @@ public class Card extends Div implements CardInf {
         row.setText(text + "]");
         return row;
     }
-
-
-
 
     /**
      * will flip the card and show correct answers

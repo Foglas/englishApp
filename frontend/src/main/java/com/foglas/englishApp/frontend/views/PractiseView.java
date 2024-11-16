@@ -17,7 +17,6 @@ public class PractiseView extends MyAppLayout {
     @Autowired
     public PractiseView(CardDataProvider cardData, WordClient wordClient){
         setContent(new PractiseForm(cardData, wordClient));
-
     }
 
 

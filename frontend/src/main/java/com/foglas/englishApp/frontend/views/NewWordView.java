@@ -12,6 +12,7 @@ public class NewWordView extends MyAppLayout {
  private final WordForm wordForm;
 
     public NewWordView(WordClient wordClient){
+        super();
         VerticalLayout verticalLayout = new VerticalLayout();
         this.wordForm = new WordForm(wordClient);
         verticalLayout.add(wordForm);

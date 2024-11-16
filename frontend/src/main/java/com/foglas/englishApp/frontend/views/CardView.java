@@ -1,9 +1,8 @@
 package com.foglas.englishApp.frontend.views;
 
-import com.foglas.englishApp.dto.ExampleDto;
 import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.components.Card;
-import com.foglas.englishApp.frontend.components.CardType;
+import com.foglas.englishApp.frontend.enums.CardType;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
 import com.vaadin.flow.component.UI;
@@ -11,11 +10,9 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Route(value = "api/cards")
