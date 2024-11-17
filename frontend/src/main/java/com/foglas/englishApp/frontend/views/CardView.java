@@ -78,7 +78,7 @@ public class CardView extends MyAppLayout {
                 };
                 previousNextCard = nextCard;
             }
-            actualCard.setActionToCorrAnswBtn(nextCardRunnable);
+            actualCard.onCorrect(nextCardRunnable);
 
         }
     }

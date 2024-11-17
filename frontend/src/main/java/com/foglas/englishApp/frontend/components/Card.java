@@ -185,12 +185,12 @@ public class Card extends Div implements CardInf {
     }
 
     @Override
-    public void setActionToCorrAnswBtn(Runnable operation) {
+    public void onCorrect(Runnable operation) {
         correctButton.addClickListener(buttonClickEvent -> operation.run());
     }
 
     @Override
-    public void setActionToBadAnswBtn(Runnable operation) {
+    public void onIncorrect(Runnable operation) {
         badButton.addClickListener(buttonClickEvent -> operation.run());
     }
 }
