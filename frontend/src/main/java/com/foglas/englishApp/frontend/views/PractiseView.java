@@ -2,7 +2,9 @@ package com.foglas.englishApp.frontend.views;
 
 import com.foglas.englishApp.frontend.components.PractiseForm;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
+import com.foglas.englishApp.frontend.endpoins.UserClient;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -15,7 +17,8 @@ public class PractiseView extends MyAppLayout {
 
 
     @Autowired
-    public PractiseView(CardDataProvider cardData, WordClient wordClient){
+    public PractiseView(CardDataProvider cardData, WordClient wordClient, UserClient userClient, AuthenticationProvider authenticationProvider){
+        super(userClient, authenticationProvider);
         setContent(new PractiseForm(cardData, wordClient));
     }
 

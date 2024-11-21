@@ -1,6 +1,7 @@
 package com.foglas.englishApp.frontend.components.layout;
 
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dto.LoginDTO;
 import com.foglas.englishApp.frontend.endpoins.UserClient;
 import com.foglas.englishApp.frontend.endpoins.UserClientInf;
 import com.foglas.englishApp.frontend.views.RegisterView;
@@ -12,6 +13,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.login.AbstractLogin;
+import com.vaadin.flow.component.login.LoginI18n;
 import com.vaadin.flow.component.login.LoginOverlay;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.Scroller;
@@ -19,17 +21,34 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
 import com.vaadin.flow.router.RouterLink;
+import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.lumo.LumoUtility;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import reactor.core.publisher.Mono;
 
 
+@UIScope
 @Slf4j
 public class MyAppLayout extends AppLayout {
 
     private VerticalLayout mainLayout = new VerticalLayout();
-    private UserClientInf userClient = new UserClient();
-    private LoginOverlay loginOverlay = new LoginOverlay();
-    public MyAppLayout() {
+    private UserClientInf userClient;
+    private LoginOverlay loginOverlay;
+    private UI ui = UI.getCurrent();
+    private AuthenticationProvider authenticationProvider;
+    protected VaadinSession session = VaadinSession.getCurrent();
+
+    @Autowired
+    public MyAppLayout(UserClient userClient, AuthenticationProvider authenticationProvider) {
+        this.authenticationProvider = authenticationProvider;
+        this.userClient = userClient;
+        LoginI18n login = LoginI18n.createDefault();
+        login.getForm().setUsername("Email");
+        loginOverlay = new LoginOverlay(login);
+
+
         if (AuthenticationProvider.isLoggedIn) {
             DrawerToggle toggle = new DrawerToggle();
 
@@ -94,7 +113,24 @@ public class MyAppLayout extends AppLayout {
 
 
     public void loginHandler(AbstractLogin.LoginEvent event) {
-        userClient.login();
+        Mono<String> response = userClient.login(new LoginDTO(event.getUsername(), event.getPassword()));
+        response.subscribe(it->{
+                if (it != null){
+                    session.lock();
+                    loginOverlay.close();
+                    session.unlock();
+                    authenticationProvider.storeToken(it, session);
+                    ui.access(() -> {ui.navigate("/practise");
+                    ui.refreshCurrentRoute(false);});
+                } else {
+                    loginOverlay.setError(true);
+                }
+        },
+                error -> {
+                    ui.access(() -> loginOverlay.setError(true)); // Re-enable button and show error
+                }
+        );
+
     }
 
     public void logoutHandler() {

@@ -6,17 +6,21 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @UIScope
 @Route(value = "api/registration")
 public class RegisterView extends VerticalLayout {
-    private RegistrationForm registration = new RegistrationForm();
+    private RegistrationForm registration;
 
-    public RegisterView() {
-        initForm();
-}
 
-    public void initForm(){
+    @Autowired
+    public RegisterView(RegistrationForm registrationForm) {
+        this.registration = registrationForm;
+        initForm(registrationForm);
+    }
+
+    public void initForm(RegistrationForm registration) {
         registration.getStyle().set("margin-top", "2em");
         HorizontalLayout horizontalWrapper = new HorizontalLayout();
         horizontalWrapper.setSizeFull();

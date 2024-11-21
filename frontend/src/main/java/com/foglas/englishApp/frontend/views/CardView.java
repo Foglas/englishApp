@@ -2,6 +2,8 @@ package com.foglas.englishApp.frontend.views;
 
 import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.components.Card;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.endpoins.UserClient;
 import com.foglas.englishApp.frontend.enums.CardType;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
@@ -12,6 +14,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
@@ -22,7 +25,9 @@ public class CardView extends MyAppLayout {
 
     private CardDataProvider cardData;
 
-    public CardView(CardDataProvider cardData){
+    @Autowired
+    public CardView(CardDataProvider cardData, UserClient userClient, AuthenticationProvider authenticationProvider){
+        super(userClient, authenticationProvider);
         this.cardData = cardData;
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidthFull();

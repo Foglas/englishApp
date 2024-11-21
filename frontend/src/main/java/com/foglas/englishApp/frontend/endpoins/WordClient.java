@@ -39,7 +39,7 @@ public class WordClient implements WordClientInf {
                 .retrieve() // Initiates the request and retrieves the response
                 .onStatus(
                         status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
-                        clientResponse -> handleErrorResponse(clientResponse) // Handle the error response
+                        this::handleErrorResponse // Handle the error response
                 )
                 .bodyToMono(String.class) // Parse the response body as a String
                 .doOnTerminate(() -> System.out.println("Request completed")) // Optional: for logging

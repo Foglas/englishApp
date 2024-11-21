@@ -1,7 +1,9 @@
 package com.foglas.englishApp.frontend.views;
 
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.domain.Stats;
+import com.foglas.englishApp.frontend.endpoins.UserClient;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
@@ -9,13 +11,16 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
 import org.apache.coyote.http11.Http11InputBuffer;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Route("stats")
 public class FinalStatsView extends MyAppLayout {
 
     private Stats stats;
 
-    public FinalStatsView(){
+    @Autowired
+    public FinalStatsView(UserClient userClient, AuthenticationProvider authenticationProvider){
+        super(userClient, authenticationProvider);
         HorizontalLayout horizontalWrapper = new HorizontalLayout();
         horizontalWrapper.setWidthFull();
         horizontalWrapper.setHeightFull();
