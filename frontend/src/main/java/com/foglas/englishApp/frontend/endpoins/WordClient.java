@@ -24,7 +24,7 @@ public class WordClient implements WordClientInf {
     private AuthenticationProvider authenticationProvider;
 
     @Override
-    public void sendSave(InputWordDto inputWordDto, String token) {
+    public Mono<String> sendSave(InputWordDto inputWordDto, String token) {
         // Create WebClient instance
         WebClient webClient = WebClient.builder()
                 .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
@@ -32,7 +32,7 @@ public class WordClient implements WordClientInf {
                 .build();
 
         // Send POST request
-        webClient.post()
+       return webClient.post()
                 .uri("/createWord") // Specify the endpoint
                 .header(HttpHeaders.CONTENT_TYPE, "application/json") // Set Content-Type header
                 .bodyValue(inputWordDto) // Set request body
@@ -41,12 +41,7 @@ public class WordClient implements WordClientInf {
                         status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
                         this::handleErrorResponse // Handle the error response
                 )
-                .bodyToMono(String.class) // Parse the response body as a String
-                .doOnTerminate(() -> System.out.println("Request completed")) // Optional: for logging
-                .subscribe(responseBody -> {
-                    // Handle the response (e.g., print the response body)
-                    System.out.println("Response: " + responseBody);
-                });
+                .bodyToMono(String.class);
     }
 
     @Override

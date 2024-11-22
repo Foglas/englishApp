@@ -3,6 +3,7 @@ package com.foglas.englishApp.frontend.Service;
 import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ public class WordService {
         this.wordClient = wordClient;
     }
 
-    public void saveWord(InputWordDto wordDto, String token){
-        wordClient.sendSave(wordDto, token);
+    public Mono<String> saveWord(InputWordDto wordDto, String token){
+        return wordClient.sendSave(wordDto, token);
     }
 
     public List<InputWordDto> getWords(Integer count, String token){

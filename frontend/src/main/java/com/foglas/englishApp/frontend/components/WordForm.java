@@ -4,7 +4,6 @@ import com.foglas.englishApp.dto.ExampleDto;
 import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
-import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.foglas.englishApp.frontend.enums.Countable;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
 import com.vaadin.flow.component.UI;
@@ -28,6 +27,7 @@ import java.util.*;
 public class WordForm extends VerticalLayout implements FormInf {
 
     private VaadinSession session = VaadinSession.getCurrent();
+    private UI ui = UI.getCurrent();
     private AuthenticationProvider authenticationProvider;
     private FormLayout formLayout;
     private TextField text;
@@ -37,6 +37,7 @@ public class WordForm extends VerticalLayout implements FormInf {
     private Button buttonSave;
     private Button buttonCancel;
     private List<TextField> examples;
+    private VerticalLayout wrapperExamples = new VerticalLayout();
     private WordService wordService;
 
     public WordForm(WordService wordService, AuthenticationProvider authenticationProvider){
@@ -106,7 +107,18 @@ public class WordForm extends VerticalLayout implements FormInf {
             mapOfValues.forEach((name, value) -> {
                 log.info("Form: " + name + " : " + value);
             });
-            wordService.saveWord(toDto(), authenticationProvider.getToken(session));
+            wordService.saveWord(toDto(), authenticationProvider.getToken(session)).subscribe(
+                    response -> {
+                        ui.access(() -> {
+                            Notification.show("Word was successful created", 1000000, Notification.Position.BOTTOM_CENTER);
+                            clearForm();
+                            ui.push();
+                        });
+
+
+                    },
+                    error ->  ui.access(() -> Notification.show(error.getMessage(), 1000000, Notification.Position.BOTTOM_CENTER))
+            );
         });
     }
 
@@ -114,6 +126,15 @@ public class WordForm extends VerticalLayout implements FormInf {
         buttonCancel.addClickListener((event) ->{
             buttonCancel.getUI().ifPresent((ui) -> ui.navigate("/practise"));
         });
+    }
+
+    private void clearForm(){
+        text.setValue("");
+        secondForm.setValue("");
+        thirdForm.setValue("");
+        countable.setValue(Countable.NOT_STATED);
+        wrapperExamples.removeAll();
+        wrapperExamples.add(createExample());
     }
 
     private void initFormLayout(){
@@ -141,18 +162,17 @@ public class WordForm extends VerticalLayout implements FormInf {
         buttonCancel.getStyle().set("margin-left","1em");
         buttonsHorLay.add(buttonCancel);
 
-        VerticalLayout examplesLayout = new VerticalLayout();
-        examplesLayout.add(createExample(examplesLayout));
+        wrapperExamples.add(createExample());
 
 
-        verticalWrapper.add(formHorLay, examplesLayout,buttonsHorLay);
+        verticalWrapper.add(formHorLay, wrapperExamples,buttonsHorLay);
         horizontalWrapper.add(verticalWrapper);
 
         add(horizontalWrapper);
     }
 
 
-    private HorizontalLayout createExample(VerticalLayout wrapper) {
+    private HorizontalLayout createExample() {
         HorizontalLayout layout = new HorizontalLayout();
         layout.setDefaultVerticalComponentAlignment(Alignment.END);
         layout.setWidthFull();
@@ -164,7 +184,7 @@ public class WordForm extends VerticalLayout implements FormInf {
         buttonAdd.addClickListener(buttonClickEvent -> {
             UI.getCurrent().access(
                     () -> {
-                        wrapper.add(createExample(wrapper));
+                        wrapperExamples.add(createExample());
                         UI.getCurrent().push();
                     }
             );
@@ -173,7 +193,7 @@ public class WordForm extends VerticalLayout implements FormInf {
         Button buttonMinus = new Button(VaadinIcon.MINUS.create());
         buttonMinus.addClickListener(buttonClickEvent1 -> {
                     if (examples.size() > 1) {
-                        wrapper.remove(layout);
+                        wrapperExamples.remove(layout);
                         UI.getCurrent().access(() -> {
                             examples.remove(example);
                             UI.getCurrent().push();
