@@ -1,5 +1,7 @@
 package com.foglas.englishApp.frontend.views;
 
+import com.foglas.englishApp.frontend.Service.UserService;
+import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.components.WordForm;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
@@ -15,10 +17,10 @@ public class NewWordView extends MyAppLayout {
  private final WordForm wordForm;
 
     @Autowired
-    public NewWordView(WordClient wordClient, UserClient userClient, AuthenticationProvider authenticationProvider){
-        super(userClient, authenticationProvider);
+    public NewWordView(WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
+        super(userService, authenticationProvider);
         VerticalLayout verticalLayout = new VerticalLayout();
-        this.wordForm = new WordForm(wordClient);
+        this.wordForm = new WordForm(wordService, authenticationProvider);
         verticalLayout.add(wordForm);
         setContent(verticalLayout);
 

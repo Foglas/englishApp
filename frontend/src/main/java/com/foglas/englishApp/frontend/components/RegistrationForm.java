@@ -1,7 +1,7 @@
 package com.foglas.englishApp.frontend.components;
 
+import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.dto.RegisterDTO;
-import com.foglas.englishApp.frontend.endpoins.UserClient;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
@@ -19,19 +19,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
-import java.time.Duration;
-
 
 @UIScope
 @Component
 public class RegistrationForm extends FormLayout {
 
-    private UserClient userClient;
+    private UserService userService;
     private UI ui = UI.getCurrent();
 
     @Autowired
-    public RegistrationForm(UserClient userClient) {
-        this.userClient = userClient;
+    public RegistrationForm(UserService userClient) {
+        this.userService = userClient;
         init();
     }
 
@@ -76,7 +74,7 @@ public class RegistrationForm extends FormLayout {
     }
 
     public void registrationHandler(ClickEvent event) {
-        Mono<String> response = userClient.register(new RegisterDTO(nickName.getValue(), email.getValue(), password.getValue()));
+        Mono<String> response = userService.register(new RegisterDTO(nickName.getValue(), email.getValue(), password.getValue()));
         response.subscribe(it -> {
                     if (it != null) {
                         ui.access(() -> ui.navigate("/practise"));

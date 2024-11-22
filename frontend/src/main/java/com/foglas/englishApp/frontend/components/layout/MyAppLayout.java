@@ -1,10 +1,8 @@
 package com.foglas.englishApp.frontend.components.layout;
 
+import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dto.LoginDTO;
-import com.foglas.englishApp.frontend.endpoins.UserClient;
-import com.foglas.englishApp.frontend.endpoins.UserClientInf;
-import com.foglas.englishApp.frontend.views.RegisterView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
@@ -20,7 +18,6 @@ import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.sidenav.SideNav;
 import com.vaadin.flow.component.sidenav.SideNavItem;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import com.vaadin.flow.theme.lumo.LumoUtility;
@@ -34,22 +31,22 @@ import reactor.core.publisher.Mono;
 public class MyAppLayout extends AppLayout {
 
     private VerticalLayout mainLayout = new VerticalLayout();
-    private UserClientInf userClient;
+    private UserService userService;
     private LoginOverlay loginOverlay;
     private UI ui = UI.getCurrent();
     private AuthenticationProvider authenticationProvider;
-    protected VaadinSession session = VaadinSession.getCurrent();
+    private VaadinSession session = VaadinSession.getCurrent();
 
     @Autowired
-    public MyAppLayout(UserClient userClient, AuthenticationProvider authenticationProvider) {
+    public MyAppLayout(UserService userService, AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
-        this.userClient = userClient;
+        this.userService = userService;
         LoginI18n login = LoginI18n.createDefault();
         login.getForm().setUsername("Email");
         loginOverlay = new LoginOverlay(login);
 
 
-        if (AuthenticationProvider.isLoggedIn) {
+        if (authenticationProvider.isLoggedIn(session)) {
             DrawerToggle toggle = new DrawerToggle();
 
             H1 title = new H1("EnglishApp");
@@ -113,7 +110,7 @@ public class MyAppLayout extends AppLayout {
 
 
     public void loginHandler(AbstractLogin.LoginEvent event) {
-        Mono<String> response = userClient.login(new LoginDTO(event.getUsername(), event.getPassword()));
+        Mono<String> response = userService.login(new LoginDTO(event.getUsername(), event.getPassword()));
         response.subscribe(it->{
                 if (it != null){
                     session.lock();
@@ -130,11 +127,12 @@ public class MyAppLayout extends AppLayout {
                     ui.access(() -> loginOverlay.setError(true)); // Re-enable button and show error
                 }
         );
-
     }
 
     public void logoutHandler() {
-        userClient.logout();
+        userService.logout();
+        ui.access(() -> ui.navigate("api/login"));
+        authenticationProvider.logout(session);
         log.info("Logged out");
     }
 

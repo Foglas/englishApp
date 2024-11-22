@@ -6,8 +6,8 @@ import java.util.List;
 
 public interface WordClientInf {
 
-    void sendSave(InputWordDto inputWordDto);
+    void sendSave(InputWordDto inputWordDto, String token);
 
-    List<InputWordDto> getWordSet(int count);
+    List<InputWordDto> getWordSet(int count, String token);
 
 }

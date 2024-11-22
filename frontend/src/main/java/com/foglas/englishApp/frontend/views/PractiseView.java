@@ -1,5 +1,7 @@
 package com.foglas.englishApp.frontend.views;
 
+import com.foglas.englishApp.frontend.Service.UserService;
+import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.components.PractiseForm;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
@@ -17,10 +19,8 @@ public class PractiseView extends MyAppLayout {
 
 
     @Autowired
-    public PractiseView(CardDataProvider cardData, WordClient wordClient, UserClient userClient, AuthenticationProvider authenticationProvider){
-        super(userClient, authenticationProvider);
-        setContent(new PractiseForm(cardData, wordClient));
+    public PractiseView(CardDataProvider cardData, WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
+        super(userService, authenticationProvider);
+        setContent(new PractiseForm(cardData, wordService, authenticationProvider));
     }
-
-
 }

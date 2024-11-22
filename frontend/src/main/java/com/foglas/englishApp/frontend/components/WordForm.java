@@ -2,10 +2,11 @@ package com.foglas.englishApp.frontend.components;
 
 import com.foglas.englishApp.dto.ExampleDto;
 import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.Service.WordService;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.foglas.englishApp.frontend.enums.Countable;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
-import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
@@ -17,6 +18,7 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.server.VaadinSession;
 import lombok.extern.log4j.Log4j2;
 
 import java.util.*;
@@ -25,6 +27,8 @@ import java.util.*;
 @Log4j2
 public class WordForm extends VerticalLayout implements FormInf {
 
+    private VaadinSession session = VaadinSession.getCurrent();
+    private AuthenticationProvider authenticationProvider;
     private FormLayout formLayout;
     private TextField text;
     private TextField secondForm;
@@ -33,10 +37,11 @@ public class WordForm extends VerticalLayout implements FormInf {
     private Button buttonSave;
     private Button buttonCancel;
     private List<TextField> examples;
-    private WordClient wordClient;
+    private WordService wordService;
 
-    public WordForm(WordClient wordClient){
-        this.wordClient = wordClient;
+    public WordForm(WordService wordService, AuthenticationProvider authenticationProvider){
+        this.wordService = wordService;
+        this.authenticationProvider = authenticationProvider;
         this.formLayout = new FormLayout();
         this.text = new TextField("Text", "take");
         this.secondForm = new TextField("Second form of the word", "took");
@@ -101,7 +106,7 @@ public class WordForm extends VerticalLayout implements FormInf {
             mapOfValues.forEach((name, value) -> {
                 log.info("Form: " + name + " : " + value);
             });
-            wordClient.sendSave(toDto());
+            wordService.saveWord(toDto(), authenticationProvider.getToken(session));
         });
     }
 

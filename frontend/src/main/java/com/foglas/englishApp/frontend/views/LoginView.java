@@ -1,5 +1,6 @@
 package com.foglas.englishApp.frontend.views;
 
+import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.endpoins.UserClient;
@@ -12,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route("api/login")
 public class LoginView extends MyAppLayout {
     @Autowired
-    public LoginView(UserClient userClient, AuthenticationProvider authenticationProvider) {
-        super(userClient, authenticationProvider);
+    public LoginView(UserService userService, AuthenticationProvider authenticationProvider) {
+        super(userService, authenticationProvider);
     }
 }

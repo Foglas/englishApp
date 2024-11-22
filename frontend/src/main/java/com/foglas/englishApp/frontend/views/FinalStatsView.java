@@ -1,5 +1,6 @@
 package com.foglas.englishApp.frontend.views;
 
+import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.domain.Stats;
@@ -19,8 +20,8 @@ public class FinalStatsView extends MyAppLayout {
     private Stats stats;
 
     @Autowired
-    public FinalStatsView(UserClient userClient, AuthenticationProvider authenticationProvider){
-        super(userClient, authenticationProvider);
+    public FinalStatsView(UserService userService, AuthenticationProvider authenticationProvider){
+        super(userService, authenticationProvider);
         HorizontalLayout horizontalWrapper = new HorizontalLayout();
         horizontalWrapper.setWidthFull();
         horizontalWrapper.setHeightFull();

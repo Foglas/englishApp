@@ -1,16 +1,15 @@
 package com.foglas.englishApp.frontend.dataProviders;
 
 import com.vaadin.flow.server.VaadinSession;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+@Scope("vaadin-session")
 @Service
 public class AuthenticationProvider {
-    public static boolean isLoggedIn = false;
     private final String tokenKey = "Bearer";
-    private VaadinSession session = VaadinSession.getCurrent();
 
     public void storeToken(String token, VaadinSession session) {
-        isLoggedIn = true;
         session.lock();
         session.setAttribute(tokenKey, token);
         session.unlock();
@@ -18,13 +17,26 @@ public class AuthenticationProvider {
 
     public String getToken(VaadinSession session) {
         session.lock();
-        String token = session.getAttribute(tokenKey).toString();
+        Object token = session.getAttribute(tokenKey);
         session.unlock();
-        return token;
+        if (token != null) {
+            return (String) token;
+        } else {
+            return null;
+        }
     }
 
-    public void logout() {
-        isLoggedIn = false;
-        VaadinSession.getCurrent().setAttribute(tokenKey, null);
+    public boolean isLoggedIn(VaadinSession session) {
+        if (session == null) {
+            return false;
+        } else if (getToken(session) == null) {
+           return false;
+        } else {
+            return true;
+        }
+    }
+
+    public void logout(VaadinSession session) {
+        session.setAttribute(tokenKey, null);
     }
 }

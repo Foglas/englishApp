@@ -1,5 +1,7 @@
 package com.foglas.englishApp.frontend.components;
 
+import com.foglas.englishApp.frontend.Service.WordService;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.foglas.englishApp.frontend.enums.Strategy;
@@ -12,6 +14,7 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.RouteScope;
 import com.vaadin.flow.spring.annotation.RouteScopeOwner;
 import com.vaadin.flow.spring.annotation.UIScope;
@@ -26,16 +29,20 @@ import java.util.Map;
 @Component
 @UIScope
 public class PractiseForm extends VerticalLayout implements FormInf {
+
+    private AuthenticationProvider authenticationProvider;
+    private VaadinSession session = VaadinSession.getCurrent();
     private Button buttonStart;
     private NumberField numberField;
     private ComboBox<Strategy> strategies;
 
     private CardDataProvider cardData;
-    private WordClient wordClient;
+    private WordService wordClient;
 
-    public PractiseForm(CardDataProvider cardData, WordClient wordClient){
+    public PractiseForm(CardDataProvider cardData, WordService wordService, AuthenticationProvider authenticationProvider){
         this.cardData = cardData;
-        this.wordClient = wordClient;
+        this.wordClient = wordService;
+        this.authenticationProvider = authenticationProvider;
         setWidthFull();
         setHeightFull();
         HorizontalLayout formHorLay = new HorizontalLayout();
@@ -71,7 +78,7 @@ public class PractiseForm extends VerticalLayout implements FormInf {
 
     private void clickStartHandle(){
         buttonStart.addClickListener(buttonClickEvent -> {
-            cardData.setWords(wordClient.getWordSet(numberField.getValue().intValue()));
+            cardData.setWords(wordClient.getWords(numberField.getValue().intValue(), authenticationProvider.getToken(session)));
             UI.getCurrent().navigate("api/cards");
         });
     }

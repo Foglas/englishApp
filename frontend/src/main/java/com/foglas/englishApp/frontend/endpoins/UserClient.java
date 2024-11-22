@@ -28,7 +28,6 @@ public class UserClient implements UserClientInf {
 
     @Override
     public void logout() {
-        AuthenticationProvider.isLoggedIn = false;
         UI.getCurrent().push();
     }
 

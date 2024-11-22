@@ -2,6 +2,8 @@ package com.foglas.englishApp.frontend.endpoins;
 
 
 import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.vaadin.flow.server.VaadinSession;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -9,7 +11,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -20,11 +21,10 @@ import java.util.List;
 @Component
 @Log4j2
 public class WordClient implements WordClientInf {
-
-    private String token = "eyJhbGciOssiJIUzI1NiJ9.eyJzdWIiOiJyYWRvc3RAZW1haWwuY3oiLCJpYXQiOjE3MzE3NTIwMjgsImV4cCI6MTczMTc1NTYyOH0.m5Eo7qUit8pCGZSwPNSgdwX1HWcYYWrvmmIJxMmUfaA";
+    private AuthenticationProvider authenticationProvider;
 
     @Override
-    public void sendSave(InputWordDto inputWordDto) {
+    public void sendSave(InputWordDto inputWordDto, String token) {
         // Create WebClient instance
         WebClient webClient = WebClient.builder()
                 .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
@@ -50,7 +50,7 @@ public class WordClient implements WordClientInf {
     }
 
     @Override
-    public List<InputWordDto> getWordSet(int count) {
+    public List<InputWordDto> getWordSet(int count, String token) {
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 
@@ -58,7 +58,7 @@ public class WordClient implements WordClientInf {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
         // Define the URL with path variable
-        String url = "http://localhost:8080/englishApp/api/private/getSet";
+        String url = "http://localhost:8080/englishApp/api/private/getSet/"+count;
 
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);

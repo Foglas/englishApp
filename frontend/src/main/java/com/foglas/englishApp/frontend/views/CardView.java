@@ -1,6 +1,7 @@
 package com.foglas.englishApp.frontend.views;
 
 import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.components.Card;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.endpoins.UserClient;
@@ -26,8 +27,8 @@ public class CardView extends MyAppLayout {
     private CardDataProvider cardData;
 
     @Autowired
-    public CardView(CardDataProvider cardData, UserClient userClient, AuthenticationProvider authenticationProvider){
-        super(userClient, authenticationProvider);
+    public CardView(CardDataProvider cardData, UserService userService, AuthenticationProvider authenticationProvider){
+        super(userService, authenticationProvider);
         this.cardData = cardData;
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidthFull();
