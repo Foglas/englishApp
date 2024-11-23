@@ -33,7 +33,7 @@ public class InputWordDto {
                                       @JsonProperty("thirdForm") String thirdForm,
                                       @JsonProperty("countable") String countable,
                                       @JsonProperty("examples") List<ExampleDto> examples,
-                                      @JsonProperty("examples") Long userId){
+                                      @JsonProperty("userId") Long userId){
         return InputWordDto.builder()
                 .text(text)
                 .secondForm(secondForm)

@@ -5,9 +5,14 @@ import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.dto.ExampleDto;
 import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.vaadin.flow.component.Text;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.details.Details;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H3;
+import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.virtuallist.VirtualList;
@@ -15,7 +20,8 @@ import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.spring.annotation.UIScope;
 import io.swagger.v3.oas.models.examples.Example;
-import org.checkerframework.checker.guieffect.qual.UI;
+import lombok.extern.log4j.Log4j2;
+import org.apache.commons.codec.digest.MurmurHash3;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +31,10 @@ import java.util.List;
 
 @UIScope
 @Component
+@Log4j2
 public class WordManagementComponent extends Div {
     //private WordService wordService;
+    private UI ui = UI.getCurrent();
 
     //private List<InputWordDto> people = wordService;
     @Autowired
@@ -87,28 +95,59 @@ public class WordManagementComponent extends Div {
     private ComponentRenderer<com.vaadin.flow.component.Component, InputWordDto> personCardRenderer = new ComponentRenderer<>(
             word -> {
                 HorizontalLayout cardLayout = new HorizontalLayout();
+
+                cardLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+                cardLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.START);
                 cardLayout.setMargin(true);
+                cardLayout.setWidthFull();
+                cardLayout.setWidthFull();
+                cardLayout.setSpacing(true);
 
-                VerticalLayout infoLayout = new VerticalLayout();
-                infoLayout.setWidthFull();
-                infoLayout.setWidthFull();
+                Div headerAndExample = new Div();
+                headerAndExample.addClickListener((divClickEvent -> handleDetails()));
+                headerAndExample.getElement().getStyle().set("cursor", "pointer");
+                H3 wordText = new H3(word.getText());
+                wordText.getStyle().set("margin-left", "0.4em");
+                wordText.getStyle().set("margin-right", "0.4em");
+                wordText.getStyle().set("font-weight", "bold");
+                HorizontalLayout information = new HorizontalLayout();
+                information.setWidth(50, Unit.PERCENTAGE);
 
-                infoLayout.setSpacing(false);
-                infoLayout.setPadding(false);
-                infoLayout.getElement().appendChild(
-                        ElementFactory.createStrong());
-                infoLayout.add(new Div(new Text(word.getText())));
+                Paragraph text = new Paragraph(word.getExamples().getFirst().getText());
+                text.getStyle().set("margin-left", "0.4em");
+                text.getStyle().set("margin-right", "0.4em");
+                text.getStyle().set("margin-top", "0em");
+                text.getStyle().set("margin-bottom", "0em");
 
-                VerticalLayout contactLayout = new VerticalLayout();
-                contactLayout.setSpacing(false);
-                contactLayout.setPadding(false);
-                contactLayout.add(new Div(new Text(word.getSecondForm())));
-                contactLayout
-                        .add(new Div(new Text(word.getThirdForm())));
-                infoLayout
-                        .add(new Details("Contact information", contactLayout));
+                headerAndExample.add(wordText, text);
+                information.add(headerAndExample);
 
-                cardLayout.add(infoLayout);
+
+                HorizontalLayout buttons = new HorizontalLayout();
+                buttons.setWidth(30, Unit.PERCENTAGE);
+                buttons.setAlignItems(FlexComponent.Alignment.CENTER);
+                buttons.setJustifyContentMode(FlexComponent.JustifyContentMode.END);
+                buttons.setMargin(true);
+                buttons.setWidthFull();
+                buttons.setWidthFull();
+                buttons.setSpacing(true);
+
+                Button delete = new Button("DELETE");
+                buttons.add(delete);
+
+                Button edit = new Button("EDIT");
+                edit.getStyle().set("margin-right", "0.8em");
+
+                buttons.add(edit);
+
+                cardLayout.add(information, buttons);
+
                 return cardLayout;
             });
+
+
+         private void handleDetails(){
+             ui.access(()-> ui.navigate("word/detail"));
+         }
+
 }

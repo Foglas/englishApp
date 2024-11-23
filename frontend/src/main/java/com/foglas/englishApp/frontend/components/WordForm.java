@@ -128,7 +128,7 @@ public class WordForm extends VerticalLayout implements FormInf {
 
     public void clickCancelHandle() {
         buttonCancel.addClickListener((event) ->{
-            buttonCancel.getUI().ifPresent((ui) -> ui.navigate("/practise"));
+            buttonCancel.getUI().ifPresent((ui) -> ui.navigate("/words"));
         });
     }
 
