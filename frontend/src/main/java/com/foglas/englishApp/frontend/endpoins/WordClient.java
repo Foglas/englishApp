@@ -1,9 +1,7 @@
 package com.foglas.englishApp.frontend.endpoins;
 
-
-import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
-import com.vaadin.flow.server.VaadinSession;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;

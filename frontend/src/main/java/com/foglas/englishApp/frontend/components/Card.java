@@ -1,8 +1,8 @@
 package com.foglas.englishApp.frontend.components;
 
 
-import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.components.interfaces.CardInf;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.foglas.englishApp.frontend.enums.CardType;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;

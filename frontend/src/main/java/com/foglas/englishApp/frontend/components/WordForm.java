@@ -1,9 +1,9 @@
 package com.foglas.englishApp.frontend.components;
 
-import com.foglas.englishApp.dto.ExampleDto;
-import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dto.ExampleDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.foglas.englishApp.frontend.enums.Countable;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
 import com.vaadin.flow.component.UI;
@@ -18,11 +18,14 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.server.VaadinSession;
+import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-
+@UIScope
+@Component
 @Log4j2
 public class WordForm extends VerticalLayout implements FormInf {
 
@@ -92,7 +95,8 @@ public class WordForm extends VerticalLayout implements FormInf {
             examples.add(new ExampleDto(example.getValue()));
         }
 
-        return InputWordDto.builder().text(text)
+        return InputWordDto.builder()
+                .text(text)
                 .examples(examples)
                 .secondForm(secondForm)
                 .thirdForm(thirdForm)

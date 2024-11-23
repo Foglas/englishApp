@@ -19,8 +19,10 @@ public class PractiseView extends MyAppLayout {
 
 
     @Autowired
-    public PractiseView(CardDataProvider cardData, WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
+    public PractiseView(PractiseForm practiseForm,CardDataProvider cardData, WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
         super(userService, authenticationProvider);
-        setContent(new PractiseForm(cardData, wordService, authenticationProvider));
+
+       // setContent(new PractiseForm(cardData, wordService, authenticationProvider));
+        setContent(practiseForm);
     }
 }

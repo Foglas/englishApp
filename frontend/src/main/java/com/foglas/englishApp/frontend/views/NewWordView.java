@@ -14,13 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Route("api/word/add")
 public class NewWordView extends MyAppLayout {
 
- private final WordForm wordForm;
+ //private final WordForm wordForm;
 
     @Autowired
-    public NewWordView(WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
+    public NewWordView(WordForm wordForm,WordService wordService, UserService userService, AuthenticationProvider authenticationProvider){
         super(userService, authenticationProvider);
         VerticalLayout verticalLayout = new VerticalLayout();
-        this.wordForm = new WordForm(wordService, authenticationProvider);
+  //      this.wordForm = new WordForm(wordService, authenticationProvider);
         verticalLayout.add(wordForm);
         setContent(verticalLayout);
 

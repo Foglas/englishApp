@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.endpoins;
 
-import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import reactor.core.publisher.Mono;
 
 import java.util.List;

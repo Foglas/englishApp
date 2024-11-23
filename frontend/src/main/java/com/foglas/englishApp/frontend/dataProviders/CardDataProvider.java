@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.dataProviders;
 
-import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

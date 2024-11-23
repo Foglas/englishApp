@@ -80,7 +80,7 @@ public class MyAppLayout extends AppLayout {
                 new SideNavItem("Dashboard", "/dashboard",
                         VaadinIcon.DASHBOARD.create()),
                 new SideNavItem("Practise", "/practise", VaadinIcon.BOOK.create()),
-                new SideNavItem("Word management", "/api/word/add", VaadinIcon.PLUS_MINUS.create()));
+                new SideNavItem("Word management", "/words", VaadinIcon.PLUS_MINUS.create()));
         return sideNav;
     }
 

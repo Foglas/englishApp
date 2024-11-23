@@ -1,13 +1,12 @@
 package com.foglas.englishApp.frontend.views;
 
-import com.foglas.englishApp.dto.InputWordDto;
 import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.components.Card;
-import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
-import com.foglas.englishApp.frontend.endpoins.UserClient;
-import com.foglas.englishApp.frontend.enums.CardType;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
+import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
+import com.foglas.englishApp.frontend.enums.CardType;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;

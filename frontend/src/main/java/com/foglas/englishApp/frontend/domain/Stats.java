@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.domain;
 
-import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 
 import java.util.List;
 

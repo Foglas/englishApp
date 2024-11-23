@@ -1,6 +1,6 @@
 package com.foglas.englishApp.frontend.Service;
 
-import com.foglas.englishApp.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
