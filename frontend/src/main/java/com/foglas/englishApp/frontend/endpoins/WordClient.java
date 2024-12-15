@@ -43,7 +43,7 @@ public class WordClient implements WordClientInf {
     }
 
     @Override
-    public List<InputWordDto> getWordSet(int count, String token) {
+    public List<InputWordDto> getWordSet(int count, String token, Long userId) {
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 
@@ -51,7 +51,7 @@ public class WordClient implements WordClientInf {
         headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
 
         // Define the URL with path variable
-        String url = "http://localhost:8080/englishApp/api/private/getSet/"+count;
+        String url = "http://localhost:8080/englishApp/api/private/getSet/"+count+"/"+userId;
 
 
         HttpEntity<Object> requestEntity = new HttpEntity<>(headers);

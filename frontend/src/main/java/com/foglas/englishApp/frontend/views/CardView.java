@@ -26,7 +26,7 @@ public class CardView extends MyAppLayout {
     private CardDataProvider cardData;
 
     @Autowired
-    public CardView(CardDataProvider cardData, UserService userService, AuthenticationProvider authenticationProvider){
+    public CardView(CardDataProvider cardData, UserService userService, AuthenticationProvider authenticationProvider) {
         super(userService, authenticationProvider);
         this.cardData = cardData;
         VerticalLayout verticalLayout = new VerticalLayout();
@@ -40,16 +40,16 @@ public class CardView extends MyAppLayout {
         initCards(horizontalLayout, cardData.getWords());
     }
 
-    private void initCards(HorizontalLayout horizontalLayout, List<InputWordDto> wordsDtos){
+    private void initCards(HorizontalLayout horizontalLayout, List<InputWordDto> wordsDtos) {
         Card previousNextCard = null;
 
-        for (int i = 0; i < wordsDtos.size(); i++){
+        for (int i = 0; i < wordsDtos.size(); i++) {
             InputWordDto word = wordsDtos.get(i);
             Card actualCard;
 
             Runnable nextCardRunnable;
-            if (i == 0) {
-                Card nextCard = new Card(wordsDtos.get(i+1), CardType.QUESTION);
+            if (i == 0 && wordsDtos.size() > 1) {
+                Card nextCard = new Card(wordsDtos.get(i + 1), CardType.QUESTION);
                 actualCard = new Card(word, CardType.QUESTION);
                 horizontalLayout.add(actualCard);
 
@@ -62,19 +62,25 @@ public class CardView extends MyAppLayout {
                     });
                 };
                 previousNextCard = nextCard;
-            } else if (i == wordsDtos.size()-1) {
+            } else if (wordsDtos.size() == 1) {
+                actualCard = new Card(word, CardType.QUESTION);
+                horizontalLayout.add(actualCard);
+
+                nextCardRunnable = () -> {
+                    UI.getCurrent().navigate("/stats");
+                };
+            } else if (i == wordsDtos.size() - 1) {
                 actualCard = previousNextCard;
 
                 nextCardRunnable = () -> {
                     UI.getCurrent().navigate("/stats");
                 };
 
-
             } else {
-                Card nextCard = new Card(wordsDtos.get(i+1), CardType.QUESTION);
+                Card nextCard = new Card(wordsDtos.get(i + 1), CardType.QUESTION);
                 actualCard = previousNextCard;
                 nextCardRunnable = () -> {
-                    UI.getCurrent().access(()->{
+                    UI.getCurrent().access(() -> {
                         horizontalLayout.remove(actualCard);
                         horizontalLayout.add(nextCard);
                         log.info("Change card 2");
@@ -87,7 +93,6 @@ public class CardView extends MyAppLayout {
 
         }
     }
-
 
 
 }

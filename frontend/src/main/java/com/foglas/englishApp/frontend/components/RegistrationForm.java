@@ -81,7 +81,7 @@ public class RegistrationForm extends FormLayout {
                     }
                 },
                 error -> {
-                    ui.access(() -> Notification.show(error.getMessage().split("message\":\"")[1].replace("\"}", ""), 100000, Notification.Position.BOTTOM_CENTER));   }
+                    ui.access(() -> Notification.show(error.getMessage().split("\"response\":")[1].replace("\"}", "").replace("\"", "").replace("}","").replace("{",""), 100000, Notification.Position.BOTTOM_CENTER));   }
         );
     }
 

@@ -42,48 +42,7 @@ public class WordManagementComponent extends Div {
         setWidth(70, Unit.PERCENTAGE);
         setHeight(80, Unit.PERCENTAGE);
         VirtualList<InputWordDto> list = new VirtualList<>();
-        List<InputWordDto> words = Arrays.asList(
-                new InputWordDto(
-                        "run", "ran", "run", "no",
-                        Arrays.asList(new ExampleDto("I run every morning.")),
-                        null),
-                new InputWordDto(
-                        "eat", "ate", "eaten", "yes",
-                        Arrays.asList(new ExampleDto("I eat breakfast at 8 AM.")),
-                        null),
-                new InputWordDto(
-                        "go", "went", "gone", "no",
-                        Arrays.asList(new ExampleDto("She goes to school every day.")),
-                        null),
-                new InputWordDto(
-                        "see", "saw", "seen", "no",
-                        Arrays.asList(new ExampleDto("I saw a movie last night.")),
-                        null),
-                new InputWordDto(
-                        "take", "took", "taken", "yes",
-                        Arrays.asList(new ExampleDto("She takes an umbrella when it rains.")),
-                        null),
-                new InputWordDto(
-                        "speak", "spoke", "spoken", "no",
-                        Arrays.asList(new ExampleDto("They spoke about the project during the meeting.")),
-                        null),
-                new InputWordDto(
-                        "write", "wrote", "written", "no",
-                        Arrays.asList(new ExampleDto("She writes a letter every Sunday.")),
-                        null),
-                new InputWordDto(
-                        "buy", "bought", "bought", "yes",
-                        Arrays.asList(new ExampleDto("I bought a new car last weekend.")),
-                        null),
-                new InputWordDto(
-                        "make", "made", "made", "yes",
-                        Arrays.asList(new ExampleDto("He made a delicious cake.")),
-                        null),
-                new InputWordDto(
-                        "begin", "began", "begun", "no",
-                        Arrays.asList(new ExampleDto("The concert began at 7 PM.")),
-                        null)
-        );
+        List<InputWordDto> words = new ArrayList<>();
 
         list.setItems(words);
         list.setRenderer(personCardRenderer);

@@ -1,11 +1,11 @@
 package com.foglas.englishApp.frontend.components;
 
 import com.foglas.englishApp.frontend.Service.WordService;
+import com.foglas.englishApp.frontend.components.interfaces.FormInf;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dto.ExampleDto;
 import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.foglas.englishApp.frontend.enums.Countable;
-import com.foglas.englishApp.frontend.components.interfaces.FormInf;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
@@ -22,7 +22,10 @@ import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @UIScope
 @Component
@@ -34,6 +37,7 @@ public class WordForm extends VerticalLayout implements FormInf {
     private AuthenticationProvider authenticationProvider;
     private FormLayout formLayout;
     private TextField text;
+    private TextField originalText;
     private TextField secondForm;
     private TextField thirdForm;
     private ComboBox<Countable> countable;
@@ -43,11 +47,12 @@ public class WordForm extends VerticalLayout implements FormInf {
     private VerticalLayout wrapperExamples = new VerticalLayout();
     private WordService wordService;
 
-    public WordForm(WordService wordService, AuthenticationProvider authenticationProvider){
+    public WordForm(WordService wordService, AuthenticationProvider authenticationProvider) {
         this.wordService = wordService;
         this.authenticationProvider = authenticationProvider;
         this.formLayout = new FormLayout();
         this.text = new TextField("Text", "take");
+        this.originalText = new TextField("Original text", "vzít");
         this.secondForm = new TextField("Second form of the word", "took");
         this.thirdForm = new TextField("Third form of the word", "taken");
         this.countable = new ComboBox<>("Countable");
@@ -55,12 +60,12 @@ public class WordForm extends VerticalLayout implements FormInf {
         this.buttonSave = new Button("save");
         examples = new ArrayList<>();
         countable.setItems(Countable.values());
-        countable.setItemLabelGenerator((item)-> {
-        if (item.equals(Countable.NOT_STATED)){
-            return "Not stated";
-        } else {
-            return item.name();
-        }
+        countable.setItemLabelGenerator((item) -> {
+            if (item.equals(Countable.NOT_STATED)) {
+                return "Not stated";
+            } else {
+                return item.name();
+            }
         });
 
         initFormLayout();
@@ -76,21 +81,22 @@ public class WordForm extends VerticalLayout implements FormInf {
         mapOfValues.put("thirdForm", thirdForm.getValue());
         mapOfValues.put("countable", countable.getValue().name());
 
-        for(int i=0; i<examples.size(); i++){
+        for (int i = 0; i < examples.size(); i++) {
             TextField example = examples.get(i);
-            mapOfValues.put("example"+i, example.getValue());
+            mapOfValues.put("example" + i, example.getValue());
         }
 
         return mapOfValues;
     }
 
-    private InputWordDto toDto(){
-     String text = this.text.getValue();
-     String secondForm = this.secondForm.getValue();
-     String thirdForm = this.thirdForm.getValue();
-     String countable = this.countable.getValue().name();
-     List<ExampleDto> examples = new ArrayList<>();
-        for(int i=0; i<this.examples.size(); i++){
+    private InputWordDto toDto() {
+        String text = this.text.getValue();
+        String secondForm = this.secondForm.getValue();
+        String thirdForm = this.thirdForm.getValue();
+        String countable = this.countable.getValue().name();
+        String originalText = this.originalText.getValue();
+        List<ExampleDto> examples = new ArrayList<>();
+        for (int i = 0; i < this.examples.size(); i++) {
             TextField example = this.examples.get(i);
             examples.add(new ExampleDto(example.getValue()));
         }
@@ -101,13 +107,15 @@ public class WordForm extends VerticalLayout implements FormInf {
                 .secondForm(secondForm)
                 .thirdForm(thirdForm)
                 .countable(countable)
+                .userId(authenticationProvider.getUserId(session))
+                .originalText(originalText)
                 .build();
 
     }
 
     public void clickSaveHandle() {
-        buttonSave.addClickListener((event) ->{
-        Map<String, String> mapOfValues = readValues();
+        buttonSave.addClickListener((event) -> {
+            Map<String, String> mapOfValues = readValues();
             mapOfValues.forEach((name, value) -> {
                 log.info("Form: " + name + " : " + value);
             });
@@ -121,18 +129,18 @@ public class WordForm extends VerticalLayout implements FormInf {
 
 
                     },
-                    error ->  ui.access(() -> Notification.show(error.getMessage(), 1000000, Notification.Position.BOTTOM_CENTER))
+                    error -> ui.access(() -> Notification.show(error.getMessage(), 1000000, Notification.Position.BOTTOM_CENTER))
             );
         });
     }
 
     public void clickCancelHandle() {
-        buttonCancel.addClickListener((event) ->{
+        buttonCancel.addClickListener((event) -> {
             buttonCancel.getUI().ifPresent((ui) -> ui.navigate("/words"));
         });
     }
 
-    private void clearForm(){
+    private void clearForm() {
         text.setValue("");
         secondForm.setValue("");
         thirdForm.setValue("");
@@ -141,8 +149,8 @@ public class WordForm extends VerticalLayout implements FormInf {
         wrapperExamples.add(createExample());
     }
 
-    private void initFormLayout(){
-        formLayout.add(text,secondForm,thirdForm,countable);
+    private void initFormLayout() {
+        formLayout.add(text, originalText, secondForm, thirdForm, countable);
         setWidthFull();
 
         HorizontalLayout horizontalWrapper = new HorizontalLayout();
@@ -159,17 +167,17 @@ public class WordForm extends VerticalLayout implements FormInf {
 
         HorizontalLayout buttonsHorLay = new HorizontalLayout();
         buttonSave.setWidth(5f, Unit.EM);
-        buttonSave.getStyle().set("margin-left","2em");
+        buttonSave.getStyle().set("margin-left", "2em");
         buttonsHorLay.add(buttonSave);
 
         buttonCancel.setWidth(5f, Unit.EM);
-        buttonCancel.getStyle().set("margin-left","1em");
+        buttonCancel.getStyle().set("margin-left", "1em");
         buttonsHorLay.add(buttonCancel);
 
         wrapperExamples.add(createExample());
 
 
-        verticalWrapper.add(formHorLay, wrapperExamples,buttonsHorLay);
+        verticalWrapper.add(formHorLay, wrapperExamples, buttonsHorLay);
         horizontalWrapper.add(verticalWrapper);
 
         add(horizontalWrapper);

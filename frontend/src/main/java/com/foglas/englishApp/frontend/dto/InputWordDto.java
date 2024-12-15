@@ -24,6 +24,8 @@ public class InputWordDto {
     private String countable;
     private List<ExampleDto> examples;
     private Long userId;
+    private String originalText;
+
 
 
 
@@ -33,7 +35,8 @@ public class InputWordDto {
                                       @JsonProperty("thirdForm") String thirdForm,
                                       @JsonProperty("countable") String countable,
                                       @JsonProperty("examples") List<ExampleDto> examples,
-                                      @JsonProperty("userId") Long userId){
+                                      @JsonProperty("userId") Long userId,
+                                      @JsonProperty("originalText") String originalText){
         return InputWordDto.builder()
                 .text(text)
                 .secondForm(secondForm)
@@ -41,6 +44,7 @@ public class InputWordDto {
                 .countable(countable)
                 .examples(examples)
                 .userId(userId)
+                .originalText(originalText)
                 .build();
     }
 

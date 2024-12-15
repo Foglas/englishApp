@@ -9,6 +9,6 @@ public interface WordClientInf {
 
     Mono<String> sendSave(InputWordDto inputWordDto, String token);
 
-    List<InputWordDto> getWordSet(int count, String token);
+    List<InputWordDto> getWordSet(int count, String token, Long userId);
 
 }

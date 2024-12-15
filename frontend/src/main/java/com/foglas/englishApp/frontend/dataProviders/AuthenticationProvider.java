@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthenticationProvider {
     private final String tokenKey = "Bearer";
+    private final String userId = "userId";
 
     public void storeToken(String token, VaadinSession session) {
         session.lock();
@@ -34,6 +35,23 @@ public class AuthenticationProvider {
         } else {
             return true;
         }
+    }
+
+    public Long getUserId(VaadinSession session) {
+        session.lock();
+        Object userId = session.getAttribute(this.userId);
+        session.unlock();
+        if (userId != null) {
+            return (Long) userId;
+        } else {
+            return null;
+        }
+    }
+
+    public void storeUserId(Long userId, VaadinSession session) {
+        session.lock();
+        session.setAttribute(this.userId, userId);
+        session.unlock();
     }
 
     public void logout(VaadinSession session) {

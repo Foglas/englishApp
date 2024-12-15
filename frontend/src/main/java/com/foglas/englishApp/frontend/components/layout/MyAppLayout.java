@@ -2,6 +2,7 @@ package com.foglas.englishApp.frontend.components.layout;
 
 import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dto.InputUserDto;
 import com.foglas.englishApp.frontend.dto.LoginDTO;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.applayout.AppLayout;
@@ -110,13 +111,14 @@ public class MyAppLayout extends AppLayout {
 
 
     public void loginHandler(AbstractLogin.LoginEvent event) {
-        Mono<String> response = userService.login(new LoginDTO(event.getUsername(), event.getPassword()));
+        Mono<InputUserDto> response = userService.login(new LoginDTO(event.getUsername(), event.getPassword()));
         response.subscribe(it->{
                 if (it != null){
                     session.lock();
                     loginOverlay.close();
                     session.unlock();
-                    authenticationProvider.storeToken(it, session);
+                    authenticationProvider.storeToken(it.getToken(), session);
+                    authenticationProvider.storeUserId(it.getUserId(), session);
                     ui.access(() -> {ui.navigate("/practise");
                     ui.refreshCurrentRoute(false);});
                 } else {

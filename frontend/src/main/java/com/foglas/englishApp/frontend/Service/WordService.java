@@ -20,7 +20,7 @@ public class WordService {
         return wordClient.sendSave(wordDto, token);
     }
 
-    public List<InputWordDto> getWords(Integer count, String token){
-       return wordClient.getWordSet(count, token);
+    public List<InputWordDto> getWords(Integer count, String token, Long userId){
+       return wordClient.getWordSet(count, token, userId);
     }
 }

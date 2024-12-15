@@ -1,5 +1,6 @@
 package com.foglas.englishApp.frontend.Service;
 
+import com.foglas.englishApp.frontend.dto.InputUserDto;
 import com.foglas.englishApp.frontend.dto.LoginDTO;
 import com.foglas.englishApp.frontend.dto.RegisterDTO;
 import com.foglas.englishApp.frontend.endpoins.UserClient;
@@ -19,7 +20,7 @@ public class UserService {
         return userClient.register(registerDTO);
     }
 
-    public Mono<String> login(LoginDTO loginDTO) {
+    public Mono<InputUserDto> login(LoginDTO loginDTO) {
        return userClient.login(loginDTO);
     }
 

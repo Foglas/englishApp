@@ -42,7 +42,7 @@ public class Card extends Div implements CardInf {
     public Card(InputWordDto inputWordDto, CardType type){
         mainVerticalLayout = new VerticalLayout();
         this.wordInOneLanguage = new H2(inputWordDto.getText());
-        this.wordInSecondLanguage = new H2("bought");
+        this.wordInSecondLanguage = new H2(inputWordDto.getOriginalText());
         this.paragraphs = new ArrayList<>();
         mainVerticalLayout = new VerticalLayout();
         currentType = type;

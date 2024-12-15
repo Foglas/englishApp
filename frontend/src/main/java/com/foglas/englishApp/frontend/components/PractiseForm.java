@@ -78,7 +78,7 @@ public class PractiseForm extends VerticalLayout implements FormInf {
 
     private void clickStartHandle(){
         buttonStart.addClickListener(buttonClickEvent -> {
-            cardData.setWords(wordClient.getWords(numberField.getValue().intValue(), authenticationProvider.getToken(session)));
+            cardData.setWords(wordClient.getWords(numberField.getValue().intValue(), authenticationProvider.getToken(session), authenticationProvider.getUserId(session)));
             UI.getCurrent().navigate("api/cards");
         });
     }

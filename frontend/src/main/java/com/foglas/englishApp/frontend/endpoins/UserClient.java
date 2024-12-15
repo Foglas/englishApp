@@ -1,6 +1,8 @@
 package com.foglas.englishApp.frontend.endpoins;
 
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dto.InputUserDto;
+import com.foglas.englishApp.frontend.dto.InputWordDto;
 import com.foglas.englishApp.frontend.dto.LoginDTO;
 import com.foglas.englishApp.frontend.dto.RegisterDTO;
 import com.vaadin.flow.component.UI;
@@ -14,7 +16,7 @@ import reactor.core.publisher.Mono;
 public class UserClient implements UserClientInf {
 
     @Override
-    public Mono<String> login(LoginDTO loginDTO) {
+    public Mono<InputUserDto> login(LoginDTO loginDTO) {
         WebClient webClient = WebClient.builder()
                 .baseUrl("http://localhost:8080")
                 .build();
@@ -23,7 +25,7 @@ public class UserClient implements UserClientInf {
                     .header("Content-Type", "application/json")
                     .bodyValue(loginDTO)
                     .retrieve()
-                    .bodyToMono(String.class);
+                    .bodyToMono(InputUserDto.class);
     }
 
     @Override
