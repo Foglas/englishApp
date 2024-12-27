@@ -1,33 +1,43 @@
 package com.foglas.englishApp.frontend.views;
 
 import com.foglas.englishApp.frontend.Service.UserService;
+import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.components.Card;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
-import com.foglas.englishApp.frontend.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.OutputWordDto;
+import com.foglas.englishApp.frontend.dto.PriorityDto;
 import com.foglas.englishApp.frontend.enums.CardType;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
 import java.util.List;
+import java.util.concurrent.Flow;
+import java.util.function.Function;
 
 @Route(value = "api/cards")
 @Log4j2
 @UIScope
 public class CardView extends MyAppLayout {
 
+    private final WordService wordService;
     private CardDataProvider cardData;
+    private AuthenticationProvider authenticationProvider;
+    private VaadinSession session = VaadinSession.getCurrent();
 
     @Autowired
-    public CardView(CardDataProvider cardData, UserService userService, AuthenticationProvider authenticationProvider) {
+    public CardView(CardDataProvider cardData, UserService userService, AuthenticationProvider authenticationProvider, WordService wordService) {
         super(userService, authenticationProvider);
+        this.authenticationProvider = authenticationProvider;
         this.cardData = cardData;
         VerticalLayout verticalLayout = new VerticalLayout();
         verticalLayout.setWidthFull();
@@ -38,61 +48,94 @@ public class CardView extends MyAppLayout {
         horizontalLayout.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
 
         initCards(horizontalLayout, cardData.getWords());
+        this.wordService = wordService;
     }
 
-    private void initCards(HorizontalLayout horizontalLayout, List<InputWordDto> wordsDtos) {
+    private void initCards(HorizontalLayout horizontalLayout, List<OutputWordDto> wordsDtos) {
         Card previousNextCard = null;
 
         for (int i = 0; i < wordsDtos.size(); i++) {
-            InputWordDto word = wordsDtos.get(i);
+            OutputWordDto word = wordsDtos.get(i);
             Card actualCard;
 
-            Runnable nextCardRunnable;
+            Runnable nextSuccessCardRunnable;
+            Runnable nextFailureCardRunnable;
             if (i == 0 && wordsDtos.size() > 1) {
                 Card nextCard = new Card(wordsDtos.get(i + 1), CardType.QUESTION);
                 actualCard = new Card(word, CardType.QUESTION);
                 horizontalLayout.add(actualCard);
 
-                nextCardRunnable = () -> {
-                    UI.getCurrent().access(() -> {
-                        horizontalLayout.remove(actualCard);
-                        horizontalLayout.add(nextCard);
-                        log.info("Change card ");
-                        UI.getCurrent().push();
-                    });
-                };
+                nextSuccessCardRunnable = createCommonCardHandler(PriorityType.SUCCESS, horizontalLayout, actualCard, nextCard, word);
+                nextFailureCardRunnable = createCommonCardHandler(PriorityType.FAILURE, horizontalLayout, actualCard, nextCard, word);
+
                 previousNextCard = nextCard;
             } else if (wordsDtos.size() == 1) {
                 actualCard = new Card(word, CardType.QUESTION);
                 horizontalLayout.add(actualCard);
 
-                nextCardRunnable = () -> {
-                    UI.getCurrent().navigate("/stats");
-                };
+                nextSuccessCardRunnable =  createEndCardHandler(PriorityType.SUCCESS, word);
+                nextFailureCardRunnable = createEndCardHandler(PriorityType.FAILURE, word);
+
             } else if (i == wordsDtos.size() - 1) {
                 actualCard = previousNextCard;
 
-                nextCardRunnable = () -> {
-                    UI.getCurrent().navigate("/stats");
-                };
+                nextSuccessCardRunnable =  createEndCardHandler(PriorityType.SUCCESS, word);
+                nextFailureCardRunnable = createEndCardHandler(PriorityType.FAILURE, word);
 
             } else {
                 Card nextCard = new Card(wordsDtos.get(i + 1), CardType.QUESTION);
                 actualCard = previousNextCard;
-                nextCardRunnable = () -> {
-                    UI.getCurrent().access(() -> {
-                        horizontalLayout.remove(actualCard);
-                        horizontalLayout.add(nextCard);
-                        log.info("Change card 2");
-                        UI.getCurrent().push();
-                    });
-                };
+
+                nextSuccessCardRunnable = createCommonCardHandler(PriorityType.SUCCESS, horizontalLayout, actualCard, nextCard, word);
+                nextFailureCardRunnable = createCommonCardHandler(PriorityType.FAILURE, horizontalLayout, actualCard, nextCard, word);
                 previousNextCard = nextCard;
             }
-            actualCard.onCorrect(nextCardRunnable);
-
+            actualCard.onCorrect(nextSuccessCardRunnable);
+            actualCard.onIncorrect(nextFailureCardRunnable);
         }
+
+
     }
 
+    private Runnable createCommonCardHandler(PriorityType type,HorizontalLayout horizontalLayout, Card actualCard, Card nextCard, OutputWordDto word) {
+        return () -> {
+            UI.getCurrent().access(() -> {
+                horizontalLayout.remove(actualCard);
+                horizontalLayout.add(nextCard);
+                log.info("Change card 2");
+                UI.getCurrent().push();
+            });
 
+            switch (type){
+                case PriorityType.SUCCESS -> wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                        it -> {
+                            cardData.saveExerciseId(it.getId(), session);
+                        }
+                );
+
+                case PriorityType.FAILURE -> wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                        it -> {
+                            cardData.saveExerciseId(it.getId(), session);
+                        }
+                );
+            }
+        };
+    }
+
+    private Runnable createEndCardHandler(PriorityType type, OutputWordDto word){
+        return  () -> {
+            switch (type){
+                case PriorityType.SUCCESS -> wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe();
+
+                case PriorityType.FAILURE -> wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe();
+            }
+
+            cardData.saveExerciseId(null, session);
+            UI.getCurrent().navigate("/stats");
+        };
+    }
+
+    enum PriorityType{
+        FAILURE, SUCCESS
+    }
 }

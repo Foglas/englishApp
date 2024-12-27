@@ -1,7 +1,10 @@
 package com.foglas.englishApp.frontend.endpoins;
 
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dto.ExerciseDto;
 import com.foglas.englishApp.frontend.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.OutputWordDto;
+import com.foglas.englishApp.frontend.dto.PriorityDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -43,7 +46,7 @@ public class WordClient implements WordClientInf {
     }
 
     @Override
-    public List<InputWordDto> getWordSet(int count, String token, Long userId) {
+    public List<OutputWordDto> getWordSet(int count, String token, Long userId) {
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
 
@@ -58,7 +61,7 @@ public class WordClient implements WordClientInf {
 
 
         // Send GET request with the path variable
-        ResponseEntity<List<InputWordDto>> response = restTemplate.exchange(
+        ResponseEntity<List<OutputWordDto>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,
                 requestEntity,
@@ -70,6 +73,50 @@ public class WordClient implements WordClientInf {
         System.out.println(response.getBody());
         return response.getBody();
     }
+
+    @Override
+    public Mono<ExerciseDto> increasePriority(PriorityDto priorityDto, String token) {
+        // Create WebClient instance
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token) // Set the Authorization header
+                .build();
+
+        // Send POST request
+        return webClient.post()
+                .uri("/priority/plus") // Specify the endpoint
+                .header(HttpHeaders.CONTENT_TYPE, "application/json") // Set Content-Type header
+                .bodyValue(priorityDto) // Set request body
+                .retrieve() // Initiates the request and retrieves the response
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
+                        this::handleErrorResponse // Handle the error response
+                )
+                .bodyToMono(ExerciseDto.class);
+    }
+
+    @Override
+    public Mono<ExerciseDto> decreasePriority(PriorityDto priorityDto, String token) {
+        // Create WebClient instance
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token) // Set the Authorization header
+                .build();
+
+        // Send POST request
+        return webClient.post()
+                .uri("/priority/minus") // Specify the endpoint
+                .header(HttpHeaders.CONTENT_TYPE, "application/json") // Set Content-Type header
+                .bodyValue(priorityDto) // Set request body
+                .retrieve() // Initiates the request and retrieves the response
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
+                        this::handleErrorResponse // Handle the error response
+                )
+                .bodyToMono(ExerciseDto.class);
+    }
+
+
 
     private Mono<? extends Throwable> handleErrorResponse(ClientResponse clientResponse) {
         return clientResponse.bodyToMono(String.class)

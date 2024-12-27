@@ -3,6 +3,7 @@ package com.foglas.englishApp.frontend.components;
 
 import com.foglas.englishApp.frontend.components.interfaces.CardInf;
 import com.foglas.englishApp.frontend.dto.InputWordDto;
+import com.foglas.englishApp.frontend.dto.OutputWordDto;
 import com.foglas.englishApp.frontend.enums.CardType;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
@@ -32,24 +33,24 @@ public class Card extends Div implements CardInf {
     private List<Paragraph> paragraphs;
     private VerticalLayout mainVerticalLayout;
     private CardType currentType;
-    private InputWordDto inputWordDto;
+    private OutputWordDto inputWordDto;
     private HorizontalLayout buttonBar;
 
     private Button correctButton;
     private Button badButton;
 
 
-    public Card(InputWordDto inputWordDto, CardType type){
+    public Card(OutputWordDto outputWordDto, CardType type){
         mainVerticalLayout = new VerticalLayout();
-        this.wordInOneLanguage = new H2(inputWordDto.getText());
-        this.wordInSecondLanguage = new H2(inputWordDto.getOriginalText());
+        this.wordInOneLanguage = new H2(outputWordDto.getText());
+        this.wordInSecondLanguage = new H2(outputWordDto.getOriginalText());
         this.paragraphs = new ArrayList<>();
         mainVerticalLayout = new VerticalLayout();
         currentType = type;
-        this.inputWordDto = inputWordDto;
+        this.inputWordDto = outputWordDto;
 
 
-        inputWordDto.getExamples().forEach(
+        outputWordDto.getExamples().forEach(
                 example -> paragraphs.add(new Paragraph(example.getText()))
         );
 
@@ -57,12 +58,12 @@ public class Card extends Div implements CardInf {
 
         switch(type) {
            case ANSWER -> {
-               initCardAnswer(inputWordDto);
+               initCardAnswer(outputWordDto);
                initQuestionStyle();
                add(mainVerticalLayout);
            }
            case QUESTION -> {
-               initCardQuestion(inputWordDto.getText());
+               initCardQuestion(outputWordDto.getText());
                add(mainVerticalLayout);
            }
         }
@@ -88,7 +89,7 @@ public class Card extends Div implements CardInf {
     }
 
 
-    private void initCardAnswer(InputWordDto word){
+    private void initCardAnswer(OutputWordDto word){
 
         //added form of the words
         List<String > forms = new ArrayList<>();

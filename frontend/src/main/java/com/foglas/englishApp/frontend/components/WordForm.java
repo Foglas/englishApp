@@ -146,7 +146,9 @@ public class WordForm extends VerticalLayout implements FormInf {
         thirdForm.setValue("");
         countable.setValue(Countable.NOT_STATED);
         wrapperExamples.removeAll();
+        examples.clear();
         wrapperExamples.add(createExample());
+
     }
 
     private void initFormLayout() {
