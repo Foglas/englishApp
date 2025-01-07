@@ -3,6 +3,7 @@ package com.foglas.englishApp.frontend.components;
 import com.foglas.englishApp.frontend.Service.WordService;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
 import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
+import com.foglas.englishApp.frontend.dto.OutputWordDto;
 import com.foglas.englishApp.frontend.endpoins.WordClient;
 import com.foglas.englishApp.frontend.enums.Strategy;
 import com.foglas.englishApp.frontend.components.interfaces.FormInf;
@@ -11,6 +12,7 @@ import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.NumberField;
@@ -35,6 +37,7 @@ public class PractiseForm extends VerticalLayout implements FormInf {
     private Button buttonStart;
     private NumberField numberField;
     private ComboBox<Strategy> strategies;
+    private UI ui = UI.getCurrent();
 
     private CardDataProvider cardData;
     private WordService wordClient;
@@ -78,8 +81,15 @@ public class PractiseForm extends VerticalLayout implements FormInf {
 
     private void clickStartHandle(){
         buttonStart.addClickListener(buttonClickEvent -> {
-            cardData.setWords(wordClient.getWords(numberField.getValue().intValue(), authenticationProvider.getToken(session), authenticationProvider.getUserId(session)));
-            UI.getCurrent().navigate("api/cards");
+            int numberOfWords = numberField.getValue().intValue();
+            List<OutputWordDto> words = wordClient.getWords(numberOfWords, authenticationProvider.getToken(session), authenticationProvider.getUserId(session));
+            if (numberOfWords != words.size()){
+                ui.access(() -> Notification.show("It`s not enough words, please set less words or create new", 100000, Notification.Position.BOTTOM_CENTER));
+            } else {
+                cardData.setWords(words);
+                cardData.saveWordsCount(numberField.getValue().intValue(), session);
+                UI.getCurrent().navigate("api/cards");
+            }
         });
     }
 

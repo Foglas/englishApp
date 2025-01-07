@@ -18,11 +18,8 @@ import com.vaadin.flow.server.VaadinSession;
 import com.vaadin.flow.spring.annotation.UIScope;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 
 import java.util.List;
-import java.util.concurrent.Flow;
-import java.util.function.Function;
 
 @Route(value = "api/cards")
 @Log4j2
@@ -32,6 +29,7 @@ public class CardView extends MyAppLayout {
     private final WordService wordService;
     private CardDataProvider cardData;
     private AuthenticationProvider authenticationProvider;
+    private UI ui = UI.getCurrent();
     private VaadinSession session = VaadinSession.getCurrent();
 
     @Autowired
@@ -53,6 +51,7 @@ public class CardView extends MyAppLayout {
 
     private void initCards(HorizontalLayout horizontalLayout, List<OutputWordDto> wordsDtos) {
         Card previousNextCard = null;
+        cardData.initSuccessAndFailed(session);
 
         for (int i = 0; i < wordsDtos.size(); i++) {
             OutputWordDto word = wordsDtos.get(i);
@@ -73,13 +72,13 @@ public class CardView extends MyAppLayout {
                 actualCard = new Card(word, CardType.QUESTION);
                 horizontalLayout.add(actualCard);
 
-                nextSuccessCardRunnable =  createEndCardHandler(PriorityType.SUCCESS, word);
+                nextSuccessCardRunnable = createEndCardHandler(PriorityType.SUCCESS, word);
                 nextFailureCardRunnable = createEndCardHandler(PriorityType.FAILURE, word);
 
             } else if (i == wordsDtos.size() - 1) {
                 actualCard = previousNextCard;
 
-                nextSuccessCardRunnable =  createEndCardHandler(PriorityType.SUCCESS, word);
+                nextSuccessCardRunnable = createEndCardHandler(PriorityType.SUCCESS, word);
                 nextFailureCardRunnable = createEndCardHandler(PriorityType.FAILURE, word);
 
             } else {
@@ -97,7 +96,7 @@ public class CardView extends MyAppLayout {
 
     }
 
-    private Runnable createCommonCardHandler(PriorityType type,HorizontalLayout horizontalLayout, Card actualCard, Card nextCard, OutputWordDto word) {
+    private Runnable createCommonCardHandler(PriorityType type, HorizontalLayout horizontalLayout, Card actualCard, Card nextCard, OutputWordDto word) {
         return () -> {
             UI.getCurrent().access(() -> {
                 horizontalLayout.remove(actualCard);
@@ -106,28 +105,54 @@ public class CardView extends MyAppLayout {
                 UI.getCurrent().push();
             });
 
-            switch (type){
-                case PriorityType.SUCCESS -> wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
-                        it -> {
-                            cardData.saveExerciseId(it.getId(), session);
-                        }
-                );
+            switch (type) {
+                case PriorityType.SUCCESS ->
+                        wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                                it -> {
+                                    cardData.saveExerciseId(it.getId(), session);
+                                    cardData.saveSuccess(session);
+                                }
+                        );
 
-                case PriorityType.FAILURE -> wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
-                        it -> {
-                            cardData.saveExerciseId(it.getId(), session);
-                        }
-                );
+                case PriorityType.FAILURE ->
+                        wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                                it -> {
+                                    cardData.saveExerciseId(it.getId(), session);
+                                    cardData.saveFailed(session);
+                                }
+                        );
             }
         };
     }
 
-    private Runnable createEndCardHandler(PriorityType type, OutputWordDto word){
-        return  () -> {
-            switch (type){
-                case PriorityType.SUCCESS -> wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe();
+    private Runnable createEndCardHandler(PriorityType type, OutputWordDto word) {
+        return () -> {
+            switch (type) {
+                case PriorityType.SUCCESS -> {
+                    wordService.decreasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                            (it) -> {
+                                if (ui != null) {
+                                    session.lock();
+                                    ui.navigate("/stats");
+                                    session.unlock();
+                                }
+                            }
+                    );
+                    cardData.saveSuccess(session);
+                }
 
-                case PriorityType.FAILURE -> wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe();
+                case PriorityType.FAILURE -> {
+                    wordService.increasePriority(new PriorityDto(word.getId(), cardData.getExerciseId(session)), authenticationProvider.getToken(session)).subscribe(
+                            (it) -> {
+                                if (ui != null) {
+                                    session.lock();
+                                    ui.navigate("/stats");
+                                    session.unlock();
+                                }
+                            }
+                    );
+                    cardData.saveFailed(session);
+                }
             }
 
             cardData.saveExerciseId(null, session);
@@ -135,7 +160,7 @@ public class CardView extends MyAppLayout {
         };
     }
 
-    enum PriorityType{
+    enum PriorityType {
         FAILURE, SUCCESS
     }
 }

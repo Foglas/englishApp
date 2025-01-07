@@ -74,15 +74,20 @@ public class RegistrationForm extends FormLayout {
     }
 
     public void registrationHandler(ClickEvent event) {
-        Mono<String> response = userService.register(new RegisterDTO(nickName.getValue(), email.getValue(), password.getValue()));
-        response.subscribe(it -> {
-                    if (it != null) {
-                        ui.access(() -> ui.navigate("/practise"));
+        if (!password.getValue().equals(passwordConfirm.getValue())) {
+            ui.access(() -> Notification.show("Passwords are not same", 3000, Notification.Position.BOTTOM_CENTER));
+        } else {
+            Mono<String> response = userService.register(new RegisterDTO(nickName.getValue(), email.getValue(), password.getValue()));
+            response.subscribe(it -> {
+                        if (it != null) {
+                            ui.access(() -> ui.navigate("/practise"));
+                        }
+                    },
+                    error -> {
+                        ui.access(() -> Notification.show(error.getMessage().split("\"response\":")[1].replace("\"}", "").replace("\"", "").replace("}", "").replace("{", ""), 3000, Notification.Position.BOTTOM_CENTER));
                     }
-                },
-                error -> {
-                    ui.access(() -> Notification.show(error.getMessage().split("\"response\":")[1].replace("\"}", "").replace("\"", "").replace("}","").replace("{",""), 100000, Notification.Position.BOTTOM_CENTER));   }
-        );
+            );
+        }
     }
 
     public void navigateToLogin() {

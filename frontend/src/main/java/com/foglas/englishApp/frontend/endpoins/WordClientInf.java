@@ -11,7 +11,7 @@ import java.util.List;
 public interface WordClientInf {
 
     Mono<String> sendSave(InputWordDto inputWordDto, String token);
-
+    Mono<String> sendUpdate(OutputWordDto word, String token);
     List<OutputWordDto> getWordSet(int count, String token, Long userId);
 
     Mono<ExerciseDto> increasePriority(PriorityDto priorityDto, String token);

@@ -1,16 +1,23 @@
 package com.foglas.englishApp.frontend.views;
 
+import com.foglas.englishApp.frontend.Service.ResultService;
 import com.foglas.englishApp.frontend.Service.UserService;
 import com.foglas.englishApp.frontend.components.layout.MyAppLayout;
 import com.foglas.englishApp.frontend.dataProviders.AuthenticationProvider;
+import com.foglas.englishApp.frontend.dataProviders.CardDataProvider;
 import com.foglas.englishApp.frontend.domain.Stats;
+import com.foglas.englishApp.frontend.dto.ResultDto;
 import com.foglas.englishApp.frontend.endpoins.UserClient;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
+import com.vaadin.flow.component.html.H2;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.server.VaadinSession;
 import org.apache.coyote.http11.Http11InputBuffer;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -18,9 +25,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class FinalStatsView extends MyAppLayout {
 
     private Stats stats;
+    private VaadinSession session = VaadinSession.getCurrent();
 
     @Autowired
-    public FinalStatsView(UserService userService, AuthenticationProvider authenticationProvider){
+    public FinalStatsView(UserService userService, ResultService resultService, CardDataProvider cardDataProvider, AuthenticationProvider authenticationProvider){
         super(userService, authenticationProvider);
         HorizontalLayout horizontalWrapper = new HorizontalLayout();
         horizontalWrapper.setWidthFull();
@@ -41,8 +49,18 @@ public class FinalStatsView extends MyAppLayout {
         content.getStyle().set("background-color", "hsla(214, 61%, 25%, 0.05)");
         content.getStyle().set("margin-top", "2em");
         content.getStyle().set("border-radius", "1em");
+        ResultDto result = cardDataProvider.getResults(session);
+
+        H2 headerSuccess = new H2("Success count");
+        Paragraph success = new Paragraph(result.getSuccess().toString());
+        H2 headerFailure = new H2("Failure count");
+        Paragraph failure = new Paragraph(result.getFailed().toString());
+        content.add(headerSuccess, success, headerFailure, failure);
+
         horizontalWrapper.add(content);
         setContent(horizontalWrapper);
+
+
     }
 
 

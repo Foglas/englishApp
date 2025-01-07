@@ -78,7 +78,7 @@ public class MyAppLayout extends AppLayout {
         SideNav sideNav = new SideNav();
         sideNav.getStyle().set("margin-top", "2em");
         sideNav.addItem(
-                new SideNavItem("Dashboard", "/dashboard",
+                new SideNavItem("Results", "/api/result",
                         VaadinIcon.DASHBOARD.create()),
                 new SideNavItem("Practise", "/practise", VaadinIcon.BOOK.create()),
                 new SideNavItem("Word management", "/words", VaadinIcon.PLUS_MINUS.create()));

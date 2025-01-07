@@ -20,7 +20,7 @@ public class OutputWordDto {
     private String secondForm;
     private String thirdForm;
     private String countable;
-    private List<ExampleDto> examples;
+    private List<InputExampleDto> examples;
     private Long userId;
     private String originalText;
     private long id;
@@ -33,7 +33,7 @@ public class OutputWordDto {
                                       @JsonProperty("secondForm") String secondForm,
                                       @JsonProperty("thirdForm") String thirdForm,
                                       @JsonProperty("countable") String countable,
-                                      @JsonProperty("examples") List<ExampleDto> examples,
+                                      @JsonProperty("examples") List<InputExampleDto> examples,
                                       @JsonProperty("userId") Long userId,
                                       @JsonProperty("originalText") String originalText,
                                       @JsonProperty("wordId") long id){

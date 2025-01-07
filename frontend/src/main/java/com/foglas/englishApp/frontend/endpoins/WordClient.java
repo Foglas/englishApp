@@ -46,6 +46,27 @@ public class WordClient implements WordClientInf {
     }
 
     @Override
+    public Mono<String> sendUpdate(OutputWordDto word, String token) {
+        // Create WebClient instance
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token) // Set the Authorization header
+                .build();
+
+        // Send POST request
+        return webClient.post()
+                .uri("/updateWord") // Specify the endpoint
+                .header(HttpHeaders.CONTENT_TYPE, "application/json") // Set Content-Type header
+                .bodyValue(word) // Set request body
+                .retrieve() // Initiates the request and retrieves the response
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
+                        this::handleErrorResponse // Handle the error response
+                )
+                .bodyToMono(String.class);
+    }
+
+    @Override
     public List<OutputWordDto> getWordSet(int count, String token, Long userId) {
         // Create RestTemplate instance
         RestTemplate restTemplate = new RestTemplate();
@@ -116,6 +137,51 @@ public class WordClient implements WordClientInf {
                 .bodyToMono(ExerciseDto.class);
     }
 
+    public List<OutputWordDto> getAllWordsByUserId(Long userId, String token){
+        // Create RestTemplate instance
+        RestTemplate restTemplate = new RestTemplate();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HttpHeaders.AUTHORIZATION, "Bearer " + token);
+
+        // Define the URL with path variable
+        String url = "http://localhost:8080/englishApp/api/private/words/user/"+userId;
+
+
+        HttpEntity<Object> requestEntity = new HttpEntity<>(headers);
+
+
+        // Send GET request with the path variable
+        ResponseEntity<List<OutputWordDto>> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                requestEntity,
+                new ParameterizedTypeReference<>() {}
+        );
+
+        // Print the response body
+        System.out.println(response.getBody());
+        return response.getBody();
+    }
+
+    public Mono<String> deleteWordById(Long wordId, String token){
+        // Create WebClient instance
+        WebClient webClient = WebClient.builder()
+                .baseUrl("http://localhost:8080/englishApp/api/private") // Base URL
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token) // Set the Authorization header
+                .build();
+
+        // Send POST request
+        return webClient.delete()
+                .uri("/words/delete/"+wordId) // Specify the endpoint
+                .header(HttpHeaders.CONTENT_TYPE, "application/json") // Set Content-Type header
+                .retrieve() // Initiates the request and retrieves the response
+                .onStatus(
+                        status -> status.is4xxClientError() || status.is5xxServerError(), // Check for client/server errors
+                        this::handleErrorResponse // Handle the error response
+                )
+                .bodyToMono(String.class);
+    }
 
 
     private Mono<? extends Throwable> handleErrorResponse(ClientResponse clientResponse) {

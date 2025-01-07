@@ -27,8 +27,6 @@ public class InputWordDto {
     private String originalText;
 
 
-
-
     @JsonCreator
     public static InputWordDto create(@JsonProperty("text") String text,
                                       @JsonProperty("secondForm") String secondForm,
@@ -36,7 +34,7 @@ public class InputWordDto {
                                       @JsonProperty("countable") String countable,
                                       @JsonProperty("examples") List<ExampleDto> examples,
                                       @JsonProperty("userId") Long userId,
-                                      @JsonProperty("originalText") String originalText){
+                                      @JsonProperty("originalText") String originalText) {
         return InputWordDto.builder()
                 .text(text)
                 .secondForm(secondForm)

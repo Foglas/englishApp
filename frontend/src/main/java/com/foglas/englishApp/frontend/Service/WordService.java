@@ -22,6 +22,10 @@ public class WordService {
     public Mono<String> saveWord(InputWordDto wordDto, String token){
         return wordClient.sendSave(wordDto, token);
     }
+    public Mono<String> updateWord(OutputWordDto wordDto, String token){
+        return wordClient.sendUpdate(wordDto, token);
+    }
+
 
     public List<OutputWordDto> getWords(Integer count, String token, Long userId){
        return wordClient.getWordSet(count, token, userId);
@@ -33,5 +37,13 @@ public class WordService {
 
     public Mono<ExerciseDto> decreasePriority(PriorityDto priorityDto, String token){
         return wordClient.decreasePriority(priorityDto, token);
+    }
+
+    public List<OutputWordDto> allWordsByUserId(Long userId, String token){
+        return wordClient.getAllWordsByUserId(userId, token);
+    }
+
+    public Mono<String> deleteWordById(Long wordId, String token){
+        return wordClient.deleteWordById(wordId, token);
     }
 }
